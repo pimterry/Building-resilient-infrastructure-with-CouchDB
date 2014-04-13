@@ -1,7 +1,56 @@
 .bespoke-slide {
   background-color: #fff;
+  padding: 20px;
 
   aside {
       display: none;
+  }
+}
+
+.title {
+  text-align: left;
+}
+
+address {
+  margin-top: 30px;
+  float: left;
+  text-align: left;
+  width: 100%;
+  font-style: normal;
+  line-height: 150%
+
+  .bio {
+    font-style: italic;
+  }
+
+  .author, a {
+    font-weight: bolder;
+  }
+
+  a {
+    color: inherit;
+    &:hover {
+      font-style: underline;
+    }
+  }
+
+  ul {
+    width: 100%;
+    position: relative;
+
+    list-style: none;
+
+    li {
+      float: left;
+      text-align: center;
+      width: 33.3%;
+
+      &:first-child {
+        text-align: left;
+      }
+      &:last-child {
+        text-align: right;
+      }
+    }
   }
 }

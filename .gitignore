@@ -3,3 +3,4 @@ src/bower_components
 public
 .tmp
 *.swp
+.grunt
