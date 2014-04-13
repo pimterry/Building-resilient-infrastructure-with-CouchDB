@@ -4,5 +4,7 @@ bespoke.from('article', {
   bullets: 'li, .bullet',
   scale: true,
   hash: true,
-  state: true
+  state: true,
+  secondary: true
 });
+
