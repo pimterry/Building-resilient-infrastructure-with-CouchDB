@@ -7,13 +7,26 @@
   }
 }
 
+.todo:before {
+  content: "TODO: "
+  color: #f00;
+  font-style: italic;
+  font-weight: bolder;
+}
+
 .title {
   text-align: left;
   font-weight: normal;
 
   .couchdb {
     font-weight: bolder;
+    color: #f00;
   }
+}
+
+h2.full-slide {
+  font-size: 70pt;
+  text-align: left;
 }
 
 address {
@@ -58,4 +71,17 @@ address {
       }
     }
   }
+}
+
+.couchdb-logo-big {
+  width: 60%;
+}
+
+.concurrent {
+  color: #222;
+  text-shadow: 80px 10px 0 #aaa,
+               160px 20px 0 #bbb,
+               240px 30px 0 #ccc,
+               320px 40px 0 #ddd,
+               400px 50px 0 #eee;
 }

@@ -21,7 +21,7 @@ html
         address.vcard
           div.author.fn Tim Perry
           div.note.bio
-            span Tech lead &amp; Open-Source Champion at 
+            span Tech Lead &amp; Open-Source Champion at 
             span.org.vcard
               a.org.fn.url(href='http://softwire.com',rel="group") Softwire
           ul.urls
@@ -37,6 +37,108 @@ html
             li Softwire. London. Bespoke dev on a huge variety of projects
             li Softwire are hiring!
 
+      section
+        img(src='images/couchdb.svg',class='couchdb-logo-big',alt='CouchDB')
+
+        aside
+          ul
+            li Who's heard of CouchDB? Used? In Production?
+            li Core concept is 'relax'
+            li Schema-free, easy to use, hard to break
+
+      section
+        h2 Document Store
+        div
+          pre
+            code.language-javascript.
+              {
+                "_id": "my-document-example",
+                "_rev": "21-qwe123asd",
+
+                "some-content": {
+                  "a": 1,
+                  "b": 2
+                },
+
+                "a list!": [3, 4, 5]
+              }
+        aside
+          ul
+            li Standalone documents
+            li No joins
+            li JSON
+            li id
+            li revision numbers (for concurrency, later)
+
+      section
+        h2 HTTP API
+        div
+          pre
+            code.language-bash.
+              $ curl -X GET http://localhost:5984/my-db/a-doc-id
+
+              {"_id": "a-doc-id"
+               "_rev": "4-9812eojawd"
+               "data": [1, 2, 3]}
+        aside
+          ul
+            li Typical RESTful
+            li Stored in DBs
+            li Access by DB + doc name
+            li _id is name
+
+      section
+        h2 HTTP API
+        div
+          pre
+            code.language-bash.
+              $ curl -X PUT http://localhost:5984/my-db/another-id
+                -d "{ 'other data': 4 }"
+
+              {"ok":true,
+               "id":"another-id",
+               "rev":"1-2902191555"}
+        aside
+          ul
+            li Can insert with specific ids, or without
+            li Revision number is automatic
+
+      section
+        h2.full-slide.concurrent
+          | Multiversion
+          | Concurrency
+          | Control
+        h3 (MVCC)
+        aside
+          ul
+            li Distributed, so concurrent changes
+            li Handled by versioning all changes
+            li We'll look at sync later
+            li Lockless, optimistic
+            li Updates + deletes need a revision
+            li Reject mismatches
+            li Later conflicts pick arbitrary deterministic revision
+
+      section
+        h2 MVCC
+        h1.todo GRAPH SHOWING MVCC
+
+      section
+        ul
+          li Map/Reduce
+          li Indexed Views
+          li ACID (locally)
+          li Erlang-based
+          li Web UI
+          li Show Functions
+          li Filters
+          li Validation
+
+        aside
+          ul
+            li Irrelevant
+            li But CouchDB is quite cool
+
     // build:js scripts/scripts.js
     script(src='bower_components/bespoke.js/dist/bespoke.min.js')
     script(src='bower_components/bespoke-keys/dist/bespoke-keys.min.js')
@@ -48,5 +150,6 @@ html
     script(src='bower_components/bespoke-indexfinger/dist/bespoke-indexfinger.js')
     script(src='bower_components/bespoke-secondary/dist/bespoke-secondary.js')
     script(src='bower_components/prism/prism.js')
+    script(src='scripts/prism-bash-highlighting.js')
     script(src='scripts/main.js')
     // endbuild
