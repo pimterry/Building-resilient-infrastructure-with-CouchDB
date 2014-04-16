@@ -139,6 +139,39 @@ html
             li Irrelevant
             li But CouchDB is quite cool
 
+      section
+        h1 Resilient Infrastructure
+        aside
+          ul
+            li What I really want to talk about
+            li Fits fine in the document store options
+            li Shines when providing resilient infrastructure though
+            li = reliable workable data storage through *anything*
+            li Total network failure, clusters of rarely-connected machines intermitten power
+            li TODO
+
+      section
+        h2 Let's break everything!
+
+        div.sideBySide
+          pre
+            code.language-bash.
+              restart lots # TODO
+          
+          pre
+            code.language-bash.
+              other things # TODO
+
+      section
+        h2 Is this useful?
+
+        aside
+          ul
+            li Large systems have to deal with external dependencies, unpredictability
+            li Cloud computing, more widely-distributed systems increase unreliability
+            li Mobile devices and networks are unreliable
+            li Uptime is *important*, to everybody
+
     // build:js scripts/scripts.js
     script(src='bower_components/bespoke.js/dist/bespoke.min.js')
     script(src='bower_components/bespoke-keys/dist/bespoke-keys.min.js')
