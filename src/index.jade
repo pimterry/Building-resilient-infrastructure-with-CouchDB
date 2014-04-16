@@ -171,6 +171,49 @@ html
             li Cloud computing, more widely-distributed systems increase unreliability
             li Mobile devices and networks are unreliable
             li Uptime is *important*, to everybody
+            li Companies have to accept this: Netflix has a chaos monkey for example
+
+      section
+        h2 Real world example
+        ul
+          li B2B SaaS product, with strict SLAs
+          li Millions of paying daily users
+          li 3,000 servers across 25 datacentres
+          li 50,000 requests per second, average
+          li Highly latency sensitive
+          li <strong>Every request needs the (readonly) user session</strong>
+
+      section
+        h2 Bonus challenges
+        ul
+          li Struggling network infrastruce
+          li Frequent loss of connection to datacentres
+          li Users can and do roam, worldwide
+          li Server failover is always to a datacenter
+
+      section
+        h2 Previous solution
+        ul
+          li Hold all user sessions in memory on every server
+          li Announce new sessions via single RabbitMQ instance
+          li Canonical store kept in a single RDBMS (for server initialisation)
+
+      section
+        h2 Real world problems
+        ul
+          li Memory usage doesn't scale
+          li Network traffic doesn't scale
+          li Network and server failures are big problems
+          li RabbitMQ failures are catastrophic problems
+
+      section
+        h2 CouchDB solution
+        ul
+          li Small LRU cache in every server
+          li CouchDB in every datacentre
+          li CouchDB in the central datacentre
+          li Hub &amp; spoke replication
+          li Servers query local CouchDB by default, or fall back to central CouchDB
 
     // build:js scripts/scripts.js
     script(src='bower_components/bespoke.js/dist/bespoke.min.js')
