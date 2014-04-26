@@ -104,6 +104,9 @@ html
             li Revision number is automatic
 
       section
+        h2 Replication
+
+      section
         h2.full-slide
           | Multiversion
           | Concurrency
@@ -186,16 +189,16 @@ html
       section
         h2 Bonus challenges
         ul
-          li Struggling network infrastruce
+          li Struggling network infrastructure
           li Frequent loss of connection to datacentres
           li Users can and do roam, worldwide
-          li Server failover is always to a datacenter
+          li Server failover is always to a different datacenter
 
       section
         h2 Previous solution
         ul
           li Hold all user sessions in memory on every server
-          li Announce new sessions via single RabbitMQ instance
+          li Announce new sessions to every server with a central message bus
           li Canonical store kept in a single RDBMS (for server initialisation)
 
       section
@@ -214,6 +217,73 @@ html
           li CouchDB in the central datacentre
           li Hub &amp; spoke replication
           li Servers query local CouchDB by default, or fall back to central CouchDB
+
+      section
+        h2 Real World Improvements
+        ul
+          li No single point of failure
+          li Scales easily horizontally
+          li Major memory savings
+    
+      section
+        h2 Some problems
+        ul
+          li Ops ramp-up
+          li Support service setup
+          li Disk usage
+
+      section
+        h2.full-slide Hood.ie
+
+      section
+        h2.todo Hood.ie
+
+      section
+        h2.full-slide Why does this work?
+
+      section
+        h2.full-slide Append-only B-trees
+
+      section
+        h2 Append-only B-trees
+        div.todo B-TREE DIAGRAM
+
+      section
+        h2.full-slide Reliable Replication
+
+      section
+        h2 Reliable Replication
+        ul
+          li Master-master
+          li Unidirectional
+          li Versioned database
+
+      section
+        h2.full-slide Erlang
+
+      section
+        h2 Did we break everything?
+
+        div.sideBySide
+          pre
+            code.language-bash.
+              restart lots # TODO
+          
+          pre
+            code.language-bash.
+              other things # TODO
+
+      section
+        h2.full-slide Phew.
+
+      section
+        h2 CouchDB is not perfect
+
+      section
+        h2 But 'always available' is a great superpower
+
+      section
+        h2.full-slide Any questions?
 
     // build:js scripts/scripts.js
     script(src='bower_components/bespoke.js/dist/bespoke.min.js')
