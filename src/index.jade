@@ -46,15 +46,17 @@ html
             li Softwire are hiring!
             li If you want to do things like this, apply, or talk to me afterwards
 
-
       section
         img(src='images/couchdb.svg',class='logo-big',alt='CouchDB')
 
         aside
           ul
+            li Back to CouchDB though
             li Who's heard of CouchDB? Used? In Production?
+            li Apache project
             li Core concept is 'relax'
-            li Schema-free, easy to use, hard to break
+            li Schema-free, simple to use, hard to break
+            li Not focusing on CouchDB generally, but some of the basics:
 
       section
         h2 Document Store
@@ -74,7 +76,7 @@ html
               }
         aside
           ul
-            li Standalone documents
+            li Document store
             li No joins
             li JSON
             li id
@@ -85,14 +87,14 @@ html
         div
           pre
             code.language-bash.
-              $ curl -X GET http://localhost:5984/my-db/a-doc-id
+              $ curl -X GET http://couchdb:5984/my-db/a-doc-id
 
               {"_id": "a-doc-id"
                "_rev": "4-9812eojawd"
                "data": [1, 2, 3]}
         aside
           ul
-            li Typical RESTful
+            li Typical RESTful API
             li Stored in DBs
             li Access by DB + doc name
             li _id is name
@@ -102,8 +104,9 @@ html
         div
           pre
             code.language-bash.
-              $ curl -X PUT http://localhost:5984/my-db/another-id
-                -d "{ 'other data': 4 }"
+              $ curl -X PUT http://couchdb:5984/my-db/another-id \
+                     -H 'Content-Type: application/json' \
+                     -d '{ "other data": 4 }'
 
               {"ok":true,
                "id":"another-id",
@@ -115,26 +118,32 @@ html
 
       section
         h2 Replication
+        pre
+          code.language-bash.
+            # Push A -&gt; B
+            $ curl -X POST http://couchdb-A:5984/_replicator \
+                   -H 'Content-Type: application/json' \
+                   -d '{ "source": "demo-db",
+                         "target": "http://couchdb-B:5984/demo-db",
+                         "continuous": true }'
 
-      section
-        h2.full-slide
-          | Multiversion
-          | Concurrency
-          | Control
-        h3 (MVCC)
+            # Push B -&gt; A
+            $ curl -X POST http://couchdb-B:5984/_replicator \
+                   -H 'Content-Type: application/json' \
+                   -d '{ "source": "demo-db",
+                         "target": "http://couchdb-A:5984/demo-db",
+                         "continuous": true }'
         aside
-          ul
-            li Distributed, so concurrent changes
-            li Handled by versioning all changes
-            li We'll look at sync later
-            li Lockless, optimistic
-            li Updates + deletes need a revision
-            li Reject mismatches
-            li Later conflicts pick arbitrary deterministic revision
-
-      section
-        h2 MVCC
-        h1.todo GRAPH SHOWING MVCC
+          ul 
+            li That's the basics out the way
+            li The critical feature is trivial replication
+            li We'll look at this in more detail later
+            li Unidirection database synchronization
+            li Push or pull
+            li Continuous
+            li Managed with documents
+            li Updated with replication process metadata + state
+            li Deleted or changed to manipulate process itself
 
       section
         ul
@@ -157,11 +166,13 @@ html
         aside
           ul
             li What I really want to talk about
-            li Fits fine in the document store options
+            li Fine as a document store
             li Shines when providing resilient infrastructure though
             li = reliable workable data storage through *anything*
-            li Total network failure, clusters of rarely-connected machines intermitten power
-            li TODO
+            li Total network failure
+            li clusters of rarely-connected machines
+            li Intermittent power
+            li Not relevant everywhere, but sometimes amazing
 
       section
         h2 Let's break everything!
@@ -269,7 +280,24 @@ html
           li Versioned database
 
       section
-        h2.full-slide Erlang
+        h2.full-slide
+          | Multiversion
+          | Concurrency
+          | Control
+        h3 (MVCC)
+        aside
+          ul
+            li Distributed, so concurrent changes
+            li Handled by versioning all changes
+            li We'll look at sync later
+            li Lockless, optimistic
+            li Updates + deletes need a revision
+            li Reject mismatches
+            li Later conflicts pick arbitrary deterministic revision
+
+      section
+        h2 MVCC
+        h1.todo GRAPH SHOWING MVCC
 
       section
         h2 Did we break everything?
