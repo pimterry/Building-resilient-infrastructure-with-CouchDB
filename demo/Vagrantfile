@@ -9,11 +9,11 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "box-a" do |box_a|
     box_a.vm.provision :shell, :path => "setup_box_a.sh"
-    box_a.vm.network :forwarded_port, host: 5000, guest: 5984
+    box_a.vm.network :private_network, ip: "10.0.100.10"
   end
 
   config.vm.define "box-b" do |box_b|
     box_b.vm.provision :shell, :path => "setup_box_b.sh"
-    box_b.vm.network :forwarded_port, host: 5001, guest: 5984
+    box_b.vm.network :private_network, ip: "10.0.100.20"
   end
 end
