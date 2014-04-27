@@ -7,13 +7,15 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision :shell, :path => "setup_both.sh"
 
-  config.vm.define "box-a" do |box_a|
-    box_a.vm.provision :shell, :path => "setup_box_a.sh"
-    box_a.vm.network :private_network, ip: "10.0.100.10"
+  config.vm.define "couchdb-a" do |couchdb_a|
+    couchdb_a.vm.provision :shell, :path => "setup_couchdb_a.sh"
+    couchdb_a.vm.hostname = "couchdb-a"
+    couchdb_a.vm.network :private_network, ip: "10.0.100.10"
   end
 
-  config.vm.define "box-b" do |box_b|
-    box_b.vm.provision :shell, :path => "setup_box_b.sh"
-    box_b.vm.network :private_network, ip: "10.0.100.20"
+  config.vm.define "couchdb-b" do |couchdb_b|
+    couchdb_b.vm.provision :shell, :path => "setup_couchdb_b.sh"
+    couchdb_b.vm.hostname = "couchdb-b"
+    couchdb_b.vm.network :private_network, ip: "10.0.100.20"
   end
 end

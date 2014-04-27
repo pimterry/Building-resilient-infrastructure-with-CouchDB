@@ -180,12 +180,32 @@ html
         div.sideBySide
           pre
             code.language-bash.
-              restart lots # TODO
-          
+              while true
+              do
+                vagrant halt couchdb-a --force
+                sleep 30
+                vagrant up couchdb-a --no-provision
+                sleep 30
+
+                vagrant halt couchdb-b --force
+                sleep 30
+                vagrant up couchdb-b --no-provision
+                sleep 30
+              done
           pre
             code.language-bash.
-              other things # TODO
+              while true
+              do
+                curl -X POST 'http://couchdb-A:5984/demo-db' \
+                     -H "content-type: application/json" \
+                     -d '{ "created_at": "'"`date`"'" }' \
+                     --max-time 0.1
 
+                curl -X POST 'http://couchdb-B:5984/demo-db' \
+                     -H "content-type: application/json" \
+                     -d '{ "created_at": "'"`date`"'" }' \
+                     --max-time 0.1
+              done
       section
         h2 Is this useful?
 
