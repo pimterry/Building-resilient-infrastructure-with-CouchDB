@@ -1,6 +1,3 @@
-vagrant up couchdb-a --no-provision
-vagrant up couchdb-b --no-provision
-
 while true
 do
   echo `date +"%T"` Stopping CouchDB A
