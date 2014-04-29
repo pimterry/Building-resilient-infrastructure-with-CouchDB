@@ -126,18 +126,18 @@ html
         h2 Replication
         pre
           code.language-bash.
-            # Push A -&gt; B
+            # Pull from B &gt; A
             $ curl -X POST http://couchdb-A:5984/_replicator \
                    -H 'Content-Type: application/json' \
-                   -d '{ "source": "demo-db",
-                         "target": "http://couchdb-B:5984/demo-db",
+                   -d '{ "source": "http://couchdb-B:5984/demo-db",
+                         "target": "demo-db",                         
                          "continuous": true }'
 
-            # Push B -&gt; A
+            # Pull from A -&gt; B
             $ curl -X POST http://couchdb-B:5984/_replicator \
                    -H 'Content-Type: application/json' \
-                   -d '{ "source": "demo-db",
-                         "target": "http://couchdb-A:5984/demo-db",
+                   -d '{ "source": "http://couchdb-A:5984/demo-db",
+                         "target": "demo-db",
                          "continuous": true }'
         aside
           ul 
@@ -145,7 +145,7 @@ html
             li The critical feature is trivial replication
             li We'll look at this in more detail later
             li Unidirection database synchronization
-            li Push or pull
+            li Push or pull, pull preferred, for reasons we'll get to later
             li Continuous
             li Managed with documents
             li Updated with replication process metadata + state
