@@ -245,7 +245,7 @@ html
             li We need to work with this (Netflix has a chaos monkey for example)
 
       section
-        h2 Real world example
+        h2 Real World Example
         h4 (Anonymized)
         ul
           li B2B SaaS product, with strict SLAs
@@ -256,7 +256,7 @@ html
           li <strong>Every request needs the (readonly) user session</strong>
 
       section
-        h2 Bonus challenges
+        h2 Bonus Challenges
         ul
           li Struggling network infrastructure
           li Frequent loss of connection to datacentres
@@ -265,14 +265,14 @@ html
           li Data center network is hub &amp; spoke (through London)
 
       section
-        h2 Previous solution
+        h2 Previous Solution
         ul
           li Hold all user sessions in memory on every server
           li Announce new sessions to every server with a central message bus
           li Canonical store kept in a single RDBMS (for server initialisation)
 
       section
-        h2 Real world problems
+        h2 Real World Problems
         ul
           li Memory usage doesn't scale
           li Network traffic doesn't scale
@@ -280,7 +280,7 @@ html
           li Message queue failures are catastrophic problems
 
       section
-        h2 CouchDB solution
+        h2 CouchDB Solution
         ul
           li Small LRU cache in every server
           li CouchDB in every datacentre
@@ -296,7 +296,7 @@ html
           li Major memory savings
     
       section
-        h2 Some problems
+        h2 Some Challenges
         ul
           li Ops ramp-up
           li Support service setup
