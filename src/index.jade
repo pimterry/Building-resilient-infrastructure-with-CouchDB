@@ -179,6 +179,7 @@ html
             li clusters of rarely-connected machines
             li Intermittent power
             li Not relevant everywhere, but sometimes amazing
+            li Lets take a look at what this can do
 
       section
         h2 Let's break everything!
@@ -216,12 +217,12 @@ html
         aside
           ul
             li 2 CouchDB VMs (A &amp; B)
+            li Replicating together
             li Left: write new docs as fast as possible
+            li Vagrant
             li Right: kill server, just yank the power out
             li Servers that are in active use, with power outages every 2 minutes
             li Pathological case
-            li Demo is a little risky
-            li But not because of CouchDB: sometimes OS gets corrupted
             li Show CouchDBs
             li Start writing
             li Show CouchDBs
@@ -254,6 +255,9 @@ html
           li 50,000 requests per second, average
           li Highly latency sensitive
           li <strong>Every request needs the (readonly) user session</strong>
+        aside
+          ul
+            li Unfortunately anonymized, but it's a real project from last year
 
       section
         h2 Bonus Challenges
