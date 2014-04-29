@@ -188,20 +188,6 @@ html
             code.language-bash.
               while true
               do
-                vagrant halt couchdb-a --force
-                sleep 30
-                vagrant up couchdb-a --no-provision
-                sleep 30
-
-                vagrant halt couchdb-b --force
-                sleep 30
-                vagrant up couchdb-b --no-provision
-                sleep 30
-              done
-          pre
-            code.language-bash.
-              while true
-              do
                 curl -X POST 'http://couchdb-A:5984/demo-db' \
                      -H "content-type: application/json" \
                      -d '{ "created_at": "'"`date`"'" }' \
@@ -212,16 +198,51 @@ html
                      -d '{ "created_at": "'"`date`"'" }' \
                      --max-time 0.1
               done
+          pre
+            code.language-bash.
+              while true
+              do
+                vagrant halt couchdb-a --force
+                sleep 30
+                vagrant up couchdb-a --no-provision
+                sleep 30
+
+                vagrant halt couchdb-b --force
+                sleep 30
+                vagrant up couchdb-b --no-provision
+                sleep 30
+              done
+        p (Some console logging omitted)
+        aside
+          ul
+            li 2 CouchDB VMs (A &amp; B)
+            li Left: write new docs as fast as possible
+            li Right: kill server, just yank the power out
+            li Servers that are in active use, with power outages every 2 minutes
+            li Pathological case
+            li Demo is a little risky
+            li But not because of CouchDB: sometimes OS gets corrupted
+            li Show CouchDBs
+            li Start writing
+            li Show CouchDBs
+            li Start killing
+            li Show CouchDBs
       section
         h2 Is this useful?
 
         aside
           ul
-            li Large systems have to deal with external dependencies, unpredictability
+            li Hopefully not
+            li If your situation is this bad, you're in real trouble, and should probably be at work fixing it
+            li But many organisations and environments do have real troubles
+            li Or need to be able to handle potential trouble
+            li Large systems have to deal with external dependencies, unpredictability, critical SLAs
             li Cloud computing, more widely-distributed systems increase unreliability
             li Mobile devices and networks are unreliable
+            li 3rd world is unreliable
+            li My hotel wifi next door is extremely unreliable
             li Uptime is *important*, to everybody
-            li Companies have to accept this: Netflix has a chaos monkey for example
+            li We need to work with this (Netflix has a chaos monkey for example)
 
       section
         h2 Real world example
@@ -332,12 +353,33 @@ html
         div.sideBySide
           pre
             code.language-bash.
-              restart lots # TODO
-          
+              while true
+              do
+                curl -X POST 'http://couchdb-A:5984/demo-db' \
+                     -H "content-type: application/json" \
+                     -d '{ "created_at": "'"`date`"'" }' \
+                     --max-time 0.1
+
+                curl -X POST 'http://couchdb-B:5984/demo-db' \
+                     -H "content-type: application/json" \
+                     -d '{ "created_at": "'"`date`"'" }' \
+                     --max-time 0.1
+              done
           pre
             code.language-bash.
-              other things # TODO
+              while true
+              do
+                vagrant halt couchdb-a --force
+                sleep 30
+                vagrant up couchdb-a --no-provision
+                sleep 30
 
+                vagrant halt couchdb-b --force
+                sleep 30
+                vagrant up couchdb-b --no-provision
+                sleep 30
+              done
+        p (Some console logging omitted)
       section
         h2.full-slide Phew.
 
