@@ -423,30 +423,27 @@ html
 
       section
         h2.full-slide Why does any of this work?
-
-      section
-        h2.full-slide Append-only B-trees
-
-      section
-        h2 Append-only B-trees
-        div.todo B-TREE DIAGRAM
+        aside
+          ul
+            li What's going on under the hood to give us eventual consistency here
+            li Despite network errors or sudden server deaths
 
       section
         h2.full-slide Reliable Replication
-
-      section
-        h2 Reliable Replication
-        ul
-          li Master-master
-          li Unidirectional
-          li Versioned database
+        aside
+          ul
+            li Asynchronous
+            li Handles network failures with retries
+            li 1/4 of a second, exponential backoff, until 5 minutes max
+            li Pull preferred, as it can run immediately on restart
+            li New nodes need data locally more than they need to provide data
 
       section
         h2.full-slide
           | Multiversion
           | Concurrency
           | Control
-        h3 (MVCC)
+        h3 (or MVCC)
         aside
           ul
             li Distributed, so concurrent changes
@@ -454,12 +451,46 @@ html
             li We'll look at sync later
             li Lockless, optimistic
             li Updates + deletes need a revision
-            li Reject mismatches
-            li Later conflicts pick arbitrary deterministic revision
+            li Reject mismatched revisions
+            li Gives ACID locally
+            li Remote conflicts pick arbitrary deterministic revision
+            li Differs from Riak
 
       section
-        h2 MVCC
-        h1.todo GRAPH SHOWING MVCC
+        h2 Reliable Replication
+        h4 The Changes Feed
+        pre
+          code.language-bash.
+              $ curl -X GET http://couchdb:5984/my-db/_changes?since=1
+
+              { "results": [
+                {"seq":2,"id":"my-doc","changes":[{"rev":"1-128qw99"}]},
+                {"seq":3,"id":"my-doc","changes":[{"rev":"2-98s9123"}]},
+              ], last_seq: 3}
+            
+      section
+        h2 Reliable Replication
+        h4 Replication Process
+
+        ol
+          li Track the source's sequence number in a local-only metadata document in the target DB, unique to this replication, set to 0 initially
+          li Read the changes since the sequence id stored in the local document on the target (up to some batch-size limit)
+          li Read any missing document revisions from the source DB
+          li Write these updates to the target DB
+          li Update the sequence number tracked in the target
+          li Go to 2
+        p (Paraphrased from
+          | <a href='http://replication.io'>http://replication.io</a>)
+
+      section
+        h2.full-slide Append-only B-trees
+
+      section
+        h2 Append-only B-trees
+
+        img(src='images/couchDbBTree.png', style='width: 400px; margin-bottom: 10px')
+        p(class='copyrightNotice')
+          | (From '<a href='http://guide.couchdb.org/draft/btree.html'>CouchDB: The Definitive Guide</a>', CC-BY) 
 
       section
         h2 Did we break everything?
