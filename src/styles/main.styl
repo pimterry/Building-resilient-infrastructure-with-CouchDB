@@ -91,11 +91,13 @@ address {
 
 .sideBySide {
   flex-direction: row;
-  width: 100%;
 
   pre {
     margin: 0.5em 0.4em;
-    font-size: 60%;
+    &:first-child { margin-left: 0; }
+    &:last-child { margin-right: 0; }
+
+    font-size: 53%;
     float: left;
     display: inline-block;
     padding: 15px !important;
