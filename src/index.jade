@@ -310,13 +310,29 @@ html
         h2.full-slide Hoodie
         h4
           a(href='http://hood.id') http://hood.ie
+        aside
+          ul
+            li Web framework
+            li Developer preview!
+            li But lots of interesting features
 
       section
         h2 Hoodie
         ul
-          li Web framework
-          li Offline-first
           li No Backend
+          li Offline-First
+        aside
+          ul
+            li Backend dev is almost by definition, far from user value
+            li Focus on building features
+            li Offline first like mobile first
+            li Mobile first: assume minimal devices, scale up
+            li Assume minimal connectivity, scale up to network features
+            li Works by default
+            li Offline first means performance feels great
+            li Downtime has minimal impact
+            li Scales with the number of clients
+            li Lets take a very quick look
 
       section
         h2 Hoodie
@@ -328,6 +344,11 @@ html
                 hoodie.store.add('task', { desc: desc });
             });
         aside
+          ul
+            li Task list
+            li Add item on submit
+            li store.add with item type, and the item
+            li Persisted to local storage
 
       section
         h2 Hoodie
@@ -338,6 +359,10 @@ html
                 $('.taskList').append('&lt;li&gt;'+task.desc+'&lt;/li&gt;');
             });
         aside
+          ul
+            li Can subscribe to item additions
+            li Here we add item to the list in the UI
+            li Will be run if we add items, or if they come from elsewhere
 
       section
         h2 Hoodie
@@ -352,23 +377,49 @@ html
                               .done(loginSuccessful);
             });
         aside
+          ul
+            li You need long term persistence, and for that you need some sort of users
+            li Provides user auth mechanisms, with a very simple API
+            li All data is then stored for this user, and loaded again when they login later
+            li But that needs a backend right?
 
       section
         h2 Hoodie
         h4 Architecture
         img(src='images/hoodie.png',style='width:600px')
-        p (From <a href='http://hood.ie/intro#magic'>http://hood.ie/intro#magic</a>)
+        p(class='copyrightNotice')
+          | (From the Hoodie team at
+          | <a href='http://hood.ie/intro#magic'>http://hood.ie/intro#magic</a>,
+          | <a href='http://creativecommons.org/licenses/by-nc-sa/4.0/'>CC-BY-SA-NC</a>)
 
+        aside
+          ul
+            li Changes are local, synced with CouchDB in the background
+            li Each user gets a database, only that is replicated
+            li Operations are documents
+            li CouchDB, with node for extra functionality if required
+            li Core stuff is all in by default
+            li Operations updated server side when they complete
+            li Built their own syncing replication client
+            li Don't build your own sync! It's hard
+            li Our project example was essentially home-made sync
 
       section
         h2 Hoodie
-        pre
-          code.language-javascript.
-            $('.addTask .submit').click(function () {
-                var desc = $('.addTask .desc').val();
-                hoodie.store.add('task', { desc: desc });
-            });
+        h4 Future Architecture (Probably)
+        img(src='images/hoodie-pouchdb.png',style='width:600px')
+        p(class='copyrightNotice')
+          | (Modified, from the Hoodie team's diagram at
+          | <a href='http://hood.ie/intro#magic'>http://hood.ie/intro#magic</a>,
+          | <a href='http://creativecommons.org/licenses/by-nc-sa/4.0/'>CC-BY-SA-NC</a>)
         aside
+          ul
+            li Hoodie are actually looking to move to PouchDB currently
+            li Essentially CouchDB entirely in the browser, and fully compatible
+            li All together, gives you web applications that don't need servers
+            li Hold all their own data client-side
+            li Persist asynchronously
+            li Don't depend on server being present
 
       section
         h2.full-slide Why does any of this work?
