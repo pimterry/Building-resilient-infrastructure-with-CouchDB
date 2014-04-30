@@ -147,6 +147,7 @@ html
             li Unidirection database synchronization
             li Push or pull, pull preferred, for reasons we'll get to later
             li Continuous
+            li Incremental
             li Managed with documents
             li Updated with replication process metadata + state
             li Deleted or changed to manipulate process itself
@@ -258,30 +259,36 @@ html
         aside
           ul
             li Unfortunately anonymized, but it's a real project from last year
+            li Large structure of Java-based services
+            li Read availability is their highest priority
+            li Write availability a close second
 
       section
         h2 Bonus Challenges
         ul
           li Struggling network infrastructure
           li Frequent loss of connection to datacentres
+          li Occasional power outages in datacentres
           li Users can and do roam, worldwide
-          li Server failover is always to a different datacenter
-          li Data center network is hub &amp; spoke (through London)
+          li Server failover is always to a different datacentre
+          li Data centres have hub &amp; spoke connectivity only (through London)
 
       section
         h2 Previous Solution
         ul
           li Hold all user sessions in memory on every server
-          li Announce new sessions to every server with a central message bus
+          li Announce new sessions to every server with a central message queue
           li Canonical store kept in a single RDBMS (for server initialisation)
 
       section
         h2 Real World Problems
         ul
           li Memory usage doesn't scale
-          li Network traffic doesn't scale
           li Network and server failures are big problems
           li Message queue failures are catastrophic problems
+        aside
+          ul 
+            li So ailing infrastructure, high availability requirements: we needed a datastore that'd solve that
 
       section
         h2 CouchDB Solution
@@ -446,13 +453,13 @@ html
         h3 (or MVCC)
         aside
           ul
+            li Before we can look at this in too much detail, we need to understand couchdb revisions
+            li Walk through normal create update cycle with revisions
+            li Gives ACID locally
             li Distributed, so concurrent changes
             li Handled by versioning all changes
-            li We'll look at sync later
-            li Lockless, optimistic
-            li Updates + deletes need a revision
-            li Reject mismatched revisions
-            li Gives ACID locally
+            li We'll look at sync in a sec
+            li Optimistic -&gt; no locking!
             li Remote conflicts pick arbitrary deterministic revision
             li Differs from Riak
 
@@ -467,6 +474,14 @@ html
                 {"seq":2,"id":"my-doc","changes":[{"rev":"1-128qw99"}]},
                 {"seq":3,"id":"my-doc","changes":[{"rev":"2-98s9123"}]},
               ], last_seq: 3}
+        aside
+          ul
+            li DB actually keeps a overall sequence number
+            li Incremented for every change
+            li This means we can query for changes since a certain point
+            li This feed just gives us revisions, by default
+            li Powerful feature in itself
+            li Also supports long polling to wait for changes, continuous streaming feed
             
       section
         h2 Reliable Replication
@@ -474,23 +489,50 @@ html
 
         ol
           li Track the source's sequence number in a local-only metadata document in the target DB, unique to this replication, set to 0 initially
-          li Read the changes since the sequence id stored in the local document on the target (up to some batch-size limit)
+          li Read the changes from the source, since the sequence id stored in the local document in the target
           li Read any missing document revisions from the source DB
           li Write these updates to the target DB
           li Update the sequence number tracked in the target
           li Go to 2
         p (Paraphrased from
           | <a href='http://replication.io'>http://replication.io</a>)
+        aside
+          ul
+            li Can use this feed to incrementally work out what changes we need
+            li Essentially pull the required changes to get to the current sequence number
+            li Update our current sequence number only once all complete
+            li If it fails before hand, we will've still pulled in some of the revisions
+            li Which is why this 3rd step exists: can resume at any point
+            li Sequence numbers just let us do that with more efficiency
+            li Note that this is potentially going to be separate from the local DBs own sequence number
 
       section
-        h2.full-slide Append-only B-trees
+        h2.full-slide Append-Only B+ Trees
+        aside
+          ul
+            li The second impressive trick
+            li CouchDB avoids data corruption, whatever you do
+            li Does this by never updating on-disk, only extending
+            li Same sort of technical benefits as immutability generally
 
       section
-        h2 Append-only B-trees
+        h2 Append-Only B+ Trees
 
         img(src='images/couchDbBTree.png', style='width: 400px; margin-bottom: 10px')
         p(class='copyrightNotice')
           | (From '<a href='http://guide.couchdb.org/draft/btree.html'>CouchDB: The Definitive Guide</a>', CC-BY) 
+        aside
+          ul
+            li This isn't a great time for a detailed primer on B+ Trees
+            li Look sort of like this, very shallow, wide nodes
+            li Pointers between nodes makes it easy to place them carefully to support this
+            li Higher up nodes do occasionally need updating, but we just create a new one
+            li Old one left in place on disk
+            li After each flush to disk, a footer is added saying which root is correct
+            li Any prefix of a CouchDB database is a valid smaller database
+            li Just go back to the previous footer, guaranteed to be complete
+            li Footers have checksums for corruption
+            li Actually write two footers, for thorough error correction
 
       section
         h2 Did we break everything?
@@ -525,6 +567,12 @@ html
                 sleep 30
               done
         p (Some console logging omitted)
+        aside
+          ul
+            li Stop the writer
+            li Stop the server killer
+            li Bring servers up
+            li Show numbers are now back in sync
       section
         h2.full-slide Phew.
 
