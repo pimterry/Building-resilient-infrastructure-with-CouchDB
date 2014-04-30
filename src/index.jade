@@ -1,0 +1,636 @@
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1')
+    title Building resilient infrastructure with CouchDB
+
+    // build:css styles/styles.css
+    //- Check out 'src/bower_components/prism/themes/' for available themes
+    link(rel='stylesheet', type='text/css', href='bower_components/prism/themes/prism-tomorrow.css')
+    link(rel='stylesheet', type='text/css', href='styles/defaults.css')
+    link(rel='stylesheet', type='text/css', href='styles/main.css')
+    // endbuild
+
+  body
+
+    article
+
+      section
+        h1.title Building resilient infrastructure with <span class="couchdb">CouchDB</span>
+        address.vcard
+          div.author.fn Tim Perry
+          div.note.bio
+            span Tech Lead &amp; Open-Source Champion at 
+            span.org.vcard
+              a.org.fn.url(href='http://softwire.com',rel="group") Softwire
+          ul.urls
+            li
+              a.url(href='http://tim-perry.co.uk',rel="me") tim-perry.co.uk
+            li
+              a.nickname.url(href='http://twitter.com/pimterry',rel="me") @pimterry
+            li
+              a.url(href='http://github.com/pimterry',rel="me") github.com/pimterry
+        aside
+          ul
+            li Tim Perry
+            li Talk about CouchDb
+
+      section
+        img(src='images/softwireLogo.png',class='logo-big',alt='Softwire')
+        aside
+          ul
+            li Who am I: I work for Softwire, London.
+            li Bespoke dev on a huge variety of projects
+            li One of which I want to talk about today
+            li Softwire are hiring!
+            li If you want to do things like this, apply, or talk to me afterwards
+            li Not affiliated with CouchDB at all
+
+      section
+        img(src='images/couchdb.svg',class='logo-big',alt='CouchDB')
+
+        aside
+          ul
+            li Back to CouchDB though
+            li Who's heard of CouchDB? Used? In Production?
+            li Apache project
+            li Core concept is 'relax'
+            li Schema-free, simple to use, hard to break
+            li Lightweight processes, will runnable on mobile, or in a browser
+            li Not focusing on CouchDB generally, but some of the basics:
+
+      section
+        h2 Document Store
+        div
+          pre
+            code.language-javascript.
+              {
+                "_id": "my-document-example",
+                "_rev": "21-qwe123asd",
+
+                "some-content": {
+                  "a": 1,
+                  "b": 2
+                },
+
+                "a list!": [3, 4, 5]
+              }
+        aside
+          ul
+            li Document store
+            li No joins
+            li JSON
+            li id
+            li revision numbers (for concurrency, later)
+
+      section
+        h2 HTTP API
+        div
+          pre
+            code.language-bash.
+              $ curl -X GET http://couchdb:5984/my-db/a-doc-id
+
+              {"_id": "a-doc-id"
+               "_rev": "4-9812eojawd"
+               "data": [1, 2, 3]}
+        aside
+          ul
+            li Typical RESTful API
+            li Stored in DBs
+            li Access by DB + doc name
+            li _id is name
+
+      section
+        h2 HTTP API
+        div
+          pre
+            code.language-bash.
+              $ curl -X PUT http://couchdb:5984/my-db/another-id \
+                     -H 'Content-Type: application/json' \
+                     -d '{ "other data": 4 }'
+
+              {"ok":true,
+               "id":"another-id",
+               "rev":"1-2902191555"}
+        aside
+          ul
+            li Can insert with specific ids, or without
+            li Revision number is automatic
+            li Increments on change
+            li Psuedorandom hash
+            li PUT to created specific docs and do updates
+            li POST to created docs with random ids
+
+      section
+        h2 Replication
+        pre
+          code.language-bash.
+            # Pull from B &gt; A
+            $ curl -X POST http://couchdb-A:5984/_replicator \
+                   -H 'Content-Type: application/json' \
+                   -d '{ "source": "http://couchdb-B:5984/demo-db",
+                         "target": "demo-db",                         
+                         "continuous": true }'
+
+            # Pull from A -&gt; B
+            $ curl -X POST http://couchdb-B:5984/_replicator \
+                   -H 'Content-Type: application/json' \
+                   -d '{ "source": "http://couchdb-A:5984/demo-db",
+                         "target": "demo-db",
+                         "continuous": true }'
+        aside
+          ul 
+            li That's the basics out the way
+            li The critical feature is trivial replication
+            li We'll look at this in more detail later
+            li Unidirection database synchronization
+            li Push or pull, pull preferred, for reasons we'll get to later
+            li Continuous
+            li Incremental
+            li Managed with documents
+            li Updated with replication process metadata + state
+            li Deleted or changed to manipulate process itself
+
+      section
+        ul
+          li Indexed Views
+          li Incremental Map/Reduce
+          li ACID (locally)
+          li Erlang-based
+          li Web UI
+          li Show Functions
+          li Filters
+          li Validation
+
+        aside
+          ul
+            li Irrelevant
+            li But CouchDB is quite cool
+
+      section
+        h1 Resilient Infrastructure
+        aside
+          ul
+            li What I really want to talk about
+            li Fine as a document store
+            li Shines when providing resilient infrastructure though
+            li = reliable workable data storage through *anything*
+            li Total network failure
+            li clusters of rarely-connected machines
+            li Intermittent power
+            li Not relevant everywhere, but sometimes amazing
+            li Lets take a look at what this can do
+
+      section
+        h2 Let's break everything!
+
+        div.sideBySide
+          pre
+            code.language-bash.
+              while true
+              do
+                curl -X POST 'http://couchdb-A:5984/demo-db' \
+                     -H "content-type: application/json" \
+                     -d '{ "created_at": "'"`date`"'" }' \
+                     --max-time 0.1
+
+                curl -X POST 'http://couchdb-B:5984/demo-db' \
+                     -H "content-type: application/json" \
+                     -d '{ "created_at": "'"`date`"'" }' \
+                     --max-time 0.1
+              done
+          pre
+            code.language-bash.
+              while true
+              do
+                vagrant halt couchdb-a --force
+                sleep 30
+                vagrant up couchdb-a --no-provision
+                sleep 30
+
+                vagrant halt couchdb-b --force
+                sleep 30
+                vagrant up couchdb-b --no-provision
+                sleep 30
+              done
+        p (Some console logging omitted)
+        aside
+          ul
+            li 2 CouchDB VMs (A &amp; B)
+            li Replicating together
+            li Left: write new docs as fast as possible
+            li Vagrant
+            li Right: kill server, just yank the power out
+            li Servers that are in active use, with power outages every 2 minutes
+            li Pathological case
+            li Show CouchDBs
+            li Start writing
+            li Show CouchDBs
+            li Start killing
+            li Show CouchDBs
+      section
+        h2 Is this useful?
+
+        aside
+          ul
+            li Hopefully not
+            li If your situation is this bad, you're in real trouble, and should probably be at work fixing it
+            li But many organisations and environments do have real troubles
+            li Or need to be able to handle potential trouble
+            li Large systems have to deal with external dependencies, unpredictability, critical SLAs
+            li Cloud computing, more widely-distributed systems increase unreliability
+            li Mobile devices and networks are unreliable
+            li 3rd world is unreliable
+            li My hotel wifi next door is extremely unreliable
+            li Uptime is *important*, to everybody
+            li We need to work with this (Netflix has a chaos monkey for example)
+
+      section
+        h2 Real World Example
+        h4 (Anonymized)
+        ul
+          li B2B SaaS product, with strict SLAs
+          li Millions of paying daily users
+          li 3,000 servers across 25 datacentres
+          li 50,000 requests per second, average
+          li Highly latency sensitive
+          li <strong>Every request needs the (readonly) user session</strong>
+        aside
+          ul
+            li Unfortunately anonymized, but it's a real project from last year
+            li Large structure of Java-based services
+            li Read availability is their highest priority
+            li Write availability a close second
+
+      section
+        h2 Bonus Challenges
+        ul
+          li Struggling network infrastructure
+          li Frequent loss of connection to datacentres
+          li Occasional power outages in datacentres
+          li Users can and do roam, worldwide
+          li Server failover is always to a different datacentre
+          li Data centres have hub &amp; spoke connectivity only (through London)
+
+      section
+        h2 Previous Solution
+        ul
+          li Hold all user sessions in memory on every server
+          li Announce new sessions to every server with a central message queue
+          li Canonical store kept in a single RDBMS (for server initialisation)
+
+      section
+        h2 Real World Problems
+        ul
+          li Memory usage doesn't scale
+          li Network and server failures are big problems
+          li Message queue failures are catastrophic problems
+        aside
+          ul 
+            li So ailing infrastructure, high availability requirements: we needed a datastore that'd solve that
+
+      section
+        h2 CouchDB Solution
+        ul
+          li Small LRU cache in every server
+          li CouchDB in every datacentre
+          li CouchDB in the central datacentre
+          li Hub &amp; spoke replication
+          li Servers query local CouchDB by default, or fall back to central CouchDB
+
+      section
+        h2 Real World Improvements
+        ul
+          li No single point of failure
+          li Scales horizontally easily
+          li Major memory savings
+    
+      section
+        h2 Some Challenges
+        ul
+          li Ops ramp-up
+          li Support service setup
+          li Disk usage
+
+      section
+        h2.full-slide Hoodie
+        h4
+          a(href='http://hood.id') http://hood.ie
+        aside
+          ul
+            li Web framework
+            li Developer preview!
+            li But lots of interesting features
+
+      section
+        h2 Hoodie
+        ul
+          li No Backend
+          li Offline-First
+        aside
+          ul
+            li Backend dev is almost by definition, far from user value
+            li Focus on building features
+            li Offline first like mobile first
+            li Mobile first: assume minimal devices, scale up
+            li Assume minimal connectivity, scale up to network features
+            li Works by default
+            li Offline first means performance feels great
+            li Downtime has minimal impact
+            li Scales with the number of clients
+            li Lets take a very quick look
+
+      section
+        h2 Hoodie
+        h4 Save data
+        pre
+          code.language-javascript.
+            $('.addTask .submit').click(function () {
+                var desc = $('.addTask .desc').val();
+                hoodie.store.add('task', { desc: desc });
+            });
+        aside
+          ul
+            li Task list
+            li Add item on submit
+            li store.add with item type, and the item
+            li Persisted to local storage
+
+      section
+        h2 Hoodie
+        h4 Handle new data
+        pre
+          code.language-javascript.
+            hoodie.store.on('add:task', function (task) {
+                $('.taskList').append('&lt;li&gt;'+task.desc+'&lt;/li&gt;');
+            });
+        aside
+          ul
+            li Can subscribe to item additions
+            li Here we add item to the list in the UI
+            li Will be run if we add items, or if they come from elsewhere
+
+      section
+        h2 Hoodie
+        h4 Log in users
+        pre
+          code.language-javascript.
+            $('.login').click(function () {
+                var username = $(".username").val();
+                var password = $(".password").val();
+
+                hoodie.account.signIn(username, password)
+                              .done(loginSuccessful);
+            });
+        aside
+          ul
+            li You need long term persistence, and for that you need some sort of users
+            li Provides user auth mechanisms, with a very simple API
+            li All data is then stored for this user, and loaded again when they login later
+            li But that needs a backend right?
+
+      section
+        h2 Hoodie
+        h4 Architecture
+        img(src='images/hoodie.png',style='width:600px')
+        p(class='copyrightNotice')
+          | (From the Hoodie team at
+          | <a href='http://hood.ie/intro#magic'>http://hood.ie/intro#magic</a>,
+          | <a href='http://creativecommons.org/licenses/by-nc-sa/4.0/'>CC-BY-SA-NC</a>)
+
+        aside
+          ul
+            li Changes are local, synced with CouchDB in the background
+            li Each user gets a database, only that is replicated
+            li Operations are documents
+            li CouchDB, with node for extra functionality if required
+            li Core stuff is all in by default
+            li Operations updated server side when they complete
+            li Built their own syncing replication client
+            li Don't build your own sync! It's hard
+            li Our project example was essentially home-made sync
+
+      section
+        h2 Hoodie
+        h4 Future Architecture (Probably)
+        img(src='images/hoodie-pouchdb.png',style='width:600px')
+        p(class='copyrightNotice')
+          | (Modified, from the Hoodie team's diagram at
+          | <a href='http://hood.ie/intro#magic'>http://hood.ie/intro#magic</a>,
+          | <a href='http://creativecommons.org/licenses/by-nc-sa/4.0/'>CC-BY-SA-NC</a>)
+        aside
+          ul
+            li Hoodie are actually looking to move to PouchDB currently
+            li Essentially CouchDB entirely in the browser, and fully compatible
+            li All together, gives you web applications that don't need servers
+            li Hold all their own data client-side
+            li Persist asynchronously
+            li Don't depend on server being present
+
+      section
+        h2.full-slide Why does any of this work?
+        aside
+          ul
+            li What's going on under the hood to give us eventual consistency here
+            li Despite network errors or sudden server deaths
+
+      section
+        h2.full-slide Reliable Replication
+        aside
+          ul
+            li Asynchronous
+            li Handles network failures with retries
+            li 1/4 of a second, exponential backoff, until 5 minutes max
+            li Pull preferred, as it can run immediately on restart
+            li New nodes need data locally more than they need to provide data
+
+      section
+        h2.full-slide
+          | Multiversion
+          | Concurrency
+          | Control
+        h3 (or MVCC)
+        aside
+          ul
+            li Before we can look at this in too much detail, we need to understand couchdb revisions
+            li Walk through normal create update cycle with revisions
+            li Gives ACID locally
+            li Distributed, so concurrent changes
+            li Handled by versioning all changes
+            li We'll look at sync in a sec
+            li Optimistic -&gt; no locking!
+            li Remote conflicts pick arbitrary deterministic revision
+            li Differs from Riak
+
+      section
+        h2 Reliable Replication
+        h4 The Changes Feed
+        pre
+          code.language-bash.
+              $ curl -X GET http://couchdb:5984/my-db/_changes?since=1
+
+              { "results": [
+                {"seq":2,"id":"my-doc","changes":[{"rev":"1-128qw99"}]},
+                {"seq":3,"id":"my-doc","changes":[{"rev":"2-98s9123"}]},
+              ], last_seq: 3}
+        aside
+          ul
+            li DB actually keeps a overall sequence number
+            li Incremented for every change
+            li This means we can query for changes since a certain point
+            li This feed just gives us revisions, by default
+            li Powerful feature in itself
+            li Also supports long polling to wait for changes, continuous streaming feed
+            
+      section
+        h2 Reliable Replication
+        h4 Replication Process
+
+        ol
+          li Track the source's sequence number in a local-only metadata document in the target DB, unique to this replication, set to 0 initially
+          li Read the changes from the source, since the sequence id stored in the local document in the target
+          li Read any missing document revisions from the source DB
+          li Write these updates to the target DB
+          li Update the sequence number tracked in the target
+          li Go to 2
+        p (Paraphrased from
+          | <a href='http://replication.io'>http://replication.io</a>)
+        aside
+          ul
+            li Can use this feed to incrementally work out what changes we need
+            li Essentially pull the required changes to get to the current sequence number
+            li Update our current sequence number only once all complete
+            li If it fails before hand, we will've still pulled in some of the revisions
+            li Which is why this 3rd step exists: can resume at any point
+            li Sequence numbers just let us do that with more efficiency
+            li Note that this is potentially going to be separate from the local DBs own sequence number
+
+      section
+        h2.full-slide Append-Only B+ Trees
+        aside
+          ul
+            li The second impressive trick
+            li CouchDB avoids data corruption, whatever you do
+            li Does this by never updating on-disk, only extending
+            li Same sort of technical benefits as immutability generally
+
+      section
+        h2 Append-Only B+ Trees
+
+        img(src='images/couchDbBTree.png', style='width: 400px; margin-bottom: 10px')
+        p(class='copyrightNotice')
+          | (From '<a href='http://guide.couchdb.org/draft/btree.html'>CouchDB: The Definitive Guide</a>', CC-BY) 
+        aside
+          ul
+            li This isn't a great time for a detailed primer on B+ Trees
+            li Look sort of like this, very shallow, wide nodes
+            li Pointers between nodes makes it easy to place them carefully to support this
+            li Higher up nodes do occasionally need updating, but we just create a new one
+            li Old one left in place on disk
+            li After each flush to disk, a footer is added saying which root is correct
+            li Any prefix of a CouchDB database is a valid smaller database
+            li Just go back to the previous footer, guaranteed to be complete
+            li Footers have checksums for corruption
+            li Actually write two footers, for thorough error correction
+
+      section
+        h2 Did we break everything?
+
+        div.sideBySide
+          pre
+            code.language-bash.
+              while true
+              do
+                curl -X POST 'http://couchdb-A:5984/demo-db' \
+                     -H "content-type: application/json" \
+                     -d '{ "created_at": "'"`date`"'" }' \
+                     --max-time 0.1
+
+                curl -X POST 'http://couchdb-B:5984/demo-db' \
+                     -H "content-type: application/json" \
+                     -d '{ "created_at": "'"`date`"'" }' \
+                     --max-time 0.1
+              done
+          pre
+            code.language-bash.
+              while true
+              do
+                vagrant halt couchdb-a --force
+                sleep 30
+                vagrant up couchdb-a --no-provision
+                sleep 30
+
+                vagrant halt couchdb-b --force
+                sleep 30
+                vagrant up couchdb-b --no-provision
+                sleep 30
+              done
+        p (Some console logging omitted)
+        aside
+          ul
+            li Stop the writer
+            li Stop the server killer
+            li Bring servers up
+            li Show numbers are now back in sync
+      section
+        h2.full-slide Phew.
+
+      section
+        h2 CouchDB is not perfect
+        aside
+          ul 
+            li One or two last points
+            li Critical: you might not want this
+            li Like all NoSQL DBs, it fulfills a niche
+            li Don't assume just because it's NoSQL it's focused on performance
+            li No functionality you might well expect
+            li Arbitrary queries
+            li Sharding
+            li Joins, obviously
+            li Not many tools around for monitoring etc
+
+      section
+        h2 But '<em>always</em> available' is a great superpower
+        aside
+          ul
+            li NoSQL really isn't all about big data, it's about better data
+            li Extra features, that enable and simplify powerful products
+            li By moving away from traditional mindset
+            li CouchDB is quite different
+            li Unique phoenix from ashes of traditional SQL
+            li Simplicity makes it easy to build monitoring etc on top
+            li Makes testing and management simple and trivially automatable
+            li Reliability means you can build cool things on the worst of foundations
+
+      section
+        h2.full-slide Any questions?
+
+        address.vcard
+          div.author.fn Tim Perry
+          div.note.bio
+            span Tech Lead &amp; Open-Source Champion at 
+            span.org.vcard
+              a.org.fn.url(href='http://softwire.com',rel="group") Softwire
+          ul.urls
+            li
+              a.url(href='http://tim-perry.co.uk',rel="me") tim-perry.co.uk
+            li
+              a.nickname.url(href='http://twitter.com/pimterry',rel="me") @pimterry
+            li
+              a.url(href='http://github.com/pimterry',rel="me") github.com/pimterry
+
+    // build:js scripts/scripts.js
+    script(src='bower_components/bespoke.js/dist/bespoke.min.js')
+    script(src='bower_components/bespoke-keys/dist/bespoke-keys.min.js')
+    script(src='bower_components/bespoke-touch/dist/bespoke-touch.min.js')
+    script(src='bower_components/bespoke-scale/dist/bespoke-scale.min.js')
+    script(src='bower_components/bespoke-hash/dist/bespoke-hash.min.js')
+    script(src='bower_components/bespoke-state/dist/bespoke-state.min.js')
+    script(src='bower_components/bespoke-convenient/dist/bespoke-convenient.js')
+    script(src='bower_components/bespoke-indexfinger/dist/bespoke-indexfinger.js')
+    script(src='bower_components/bespoke-secondary/dist/bespoke-secondary.js')
+    script(src='bower_components/prism/prism.js')
+    script(src='scripts/prism-bash-highlighting.js')
+    script(src='scripts/main.js')
+    // endbuild

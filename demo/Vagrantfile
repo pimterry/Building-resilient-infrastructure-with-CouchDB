@@ -1,0 +1,21 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "chef/ubuntu-13.10"
+  config.vm.box_url = "https://vagrantcloud.com/chef/ubuntu-13.10/version/1/provider/virtualbox.box"
+
+  config.vm.provision :shell, :path => "setup_both.sh"
+
+  config.vm.define "couchdb-a" do |couchdb_a|
+    couchdb_a.vm.provision :shell, :path => "setup_couchdb_a.sh"
+    couchdb_a.vm.hostname = "couchdb-a"
+    couchdb_a.vm.network :private_network, ip: "10.0.100.10"
+  end
+
+  config.vm.define "couchdb-b" do |couchdb_b|
+    couchdb_b.vm.provision :shell, :path => "setup_couchdb_b.sh"
+    couchdb_b.vm.hostname = "couchdb-b"
+    couchdb_b.vm.network :private_network, ip: "10.0.100.20"
+  end
+end
