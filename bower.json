@@ -10,5 +10,8 @@
     "bespoke-state": "~0.2.0",
     "prism": "gh-pages",
     "bespoke-secondary": "~0.2.0"
+  },
+  "resolutions": {
+    "bespoke.js": "~0.4.0"
   }
 }
