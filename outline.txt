@@ -1,25 +1,22 @@
-35-40 minutes:
+50 minutes:
 
-- Intro
-  Tim Perry, Softwire, CouchDB is a document store, HTTP API, erlang, other general points
-  5 mins
+Intro to me/CouchDb
 
-- What is CouchDB good at
-  - Start demo
-  5 mins
+CouchDB basics
 
-- CouchDB project outline
-  10 mins
-- Hood.ie, and how they use CouchDB (maybe)
-  5 mins
+* CouchDB UI walkthrough
 
-- Internal features that enable this, and how they work
-  - Append-only B-Trees
-    5 mins
-  - Replication infrastructure
-    5 mins
-  - Erlang itself?
-    <5 minutes
+* VM Diagram (including some Vagrant explanation)
+Break everything!
 
-- Stop demo, and conclusion
-  5 mins
+Real world example
+
+Hood.ie
+
+How does this work?
+* More detail on append-only B+ trees
+
+End demo
+* Show UIs too
+
+Conclusion
