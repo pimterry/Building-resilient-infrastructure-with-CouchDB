@@ -23,9 +23,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6"
-     inkscape:cx="198.41912"
-     inkscape:cy="179.01246"
+     inkscape:zoom="2.8"
+     inkscape:cx="188.44346"
+     inkscape:cy="152.22118"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -7057,7 +7057,7 @@
            x="525.20422"
            style="font-size:2.2485621px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
            xml:space="preserve"><tspan
-             style="fill:#ffffff;fill-opacity:1"
+             style="fill:#ffffff;fill-opacity:1;-inkscape-font-specification:Arial;font-family:Arial;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
              y="126.12477"
              x="525.20422"
              id="tspan8303-7-9"
@@ -7415,7 +7415,7 @@
            x="525.20422"
            style="font-size:2.2485621px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
            xml:space="preserve"><tspan
-             style="fill:#ffffff;fill-opacity:1"
+             style="fill:#ffffff;fill-opacity:1;-inkscape-font-specification:Arial;font-family:Arial;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
              y="126.12477"
              x="525.20422"
              id="tspan8303-7-9-8"
@@ -7451,7 +7451,7 @@
            x="525.20422"
            style="font-size:2.2485621px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
            xml:space="preserve"><tspan
-             style="fill:#ffffff;fill-opacity:1"
+             style="fill:#ffffff;fill-opacity:1;-inkscape-font-specification:Arial;font-family:Arial;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
              y="126.12477"
              x="525.20422"
              id="tspan8303-7-9-6"
@@ -7809,7 +7809,7 @@
            x="525.20422"
            style="font-size:2.2485621px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
            xml:space="preserve"><tspan
-             style="fill:#ffffff;fill-opacity:1"
+             style="fill:#ffffff;fill-opacity:1;-inkscape-font-specification:Arial;font-family:Arial;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal"
              y="126.12477"
              x="525.20422"
              id="tspan8303-7-9-8-2"
@@ -8439,18 +8439,21 @@
            style="fill:#ffffff" />
       </g>
     </g>
-    <path
-       inkscape:connector-curvature="0"
-       inkscape:connector-type="polyline"
-       id="path14067"
-       d="m 573.21264,34.420742 -69.14524,-10e-7"
-       style="fill:none;stroke:#de0000;stroke-width:0.98613858;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#EmptyTriangleOutL1)" />
-    <path
-       inkscape:connector-curvature="0"
-       inkscape:connector-type="polyline"
-       id="path14067-1"
-       d="m 503.33153,58.007588 69.36763,-10e-7"
-       style="fill:none;stroke:#de0000;stroke-width:0.98763043;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#EmptyTriangleOutL-3K)" />
+    <g
+       id="g20431">
+      <path
+         style="fill:none;stroke:#de0000;stroke-width:0.98613858;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#EmptyTriangleOutL1)"
+         d="m 573.21264,34.420742 -69.14524,-10e-7"
+         id="path14067"
+         inkscape:connector-type="polyline"
+         inkscape:connector-curvature="0" />
+      <path
+         style="fill:none;stroke:#de0000;stroke-width:0.98763043;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-end:url(#EmptyTriangleOutL-3K)"
+         d="m 503.33153,58.007588 69.36763,-10e-7"
+         id="path14067-1"
+         inkscape:connector-type="polyline"
+         inkscape:connector-curvature="0" />
+    </g>
     <g
        id="g20217"
        transform="translate(0,-0.25253814)">
@@ -8499,5 +8502,29 @@
          x="644.68573"
          id="tspan6681-4-4"
          sodipodi:role="line">VM</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="428.21487"
+       y="208.29242"
+       id="text20821"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan20823"
+         x="428.21487"
+         y="208.29242"
+         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas">./create_docs.sh</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:10px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="556.33289"
+       y="208.29242"
+       id="text20821-1"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan20823-3"
+         x="556.33289"
+         y="208.29242"
+         style="font-size:10px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Consolas;-inkscape-font-specification:Consolas">./break_things.sh</tspan></text>
   </g>
 </svg>
