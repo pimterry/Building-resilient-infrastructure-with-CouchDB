@@ -24,11 +24,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="7.9195959"
-     inkscape:cx="96.075813"
-     inkscape:cy="83.534004"
+     inkscape:zoom="1.979899"
+     inkscape:cx="241.64815"
+     inkscape:cy="157.54663"
      inkscape:document-units="px"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="g5852"
      showgrid="false"
      inkscape:showpageshadow="false"
      showborder="true"
@@ -9215,7 +9215,7 @@
            sodipodi:role="line"
            id="tspan5872"
            x="388.12912"
-           y="158.46216">vagrant halt couchdb-b --force</tspan></text>
+           y="158.46216">vagrant halt couchdb-a --force</tspan></text>
     </g>
     <path
        inkscape:connector-curvature="0"
