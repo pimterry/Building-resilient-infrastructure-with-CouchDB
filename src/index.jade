@@ -215,6 +215,55 @@ html
                 sleep 30
               done
         p (Some console logging omitted)
+
+      section
+        ul.bullets.in-place-transition
+          li
+            img(src='images/demo-diagram-replicating.png').diagram
+          li
+            img(src='images/demo-diagram-create.png').diagram
+          li
+            img(src='images/demo-diagram-break-b.png').diagram
+          li
+            img(src='images/demo-diagram-create.png').diagram
+          li
+            img(src='images/demo-diagram-break-a.png').diagram
+          li
+            img(src='images/demo-diagram-create.png').diagram
+
+      section
+        h2 Let's break everything!
+
+        div.sideBySide
+          pre
+            code.language-bash.
+              while true
+              do
+                curl -X POST 'http://couchdb-A:5984/demo-db' \
+                     -H "content-type: application/json" \
+                     -d '{ "created_at": "'"`date`"'" }' \
+                     --max-time 0.1
+
+                curl -X POST 'http://couchdb-B:5984/demo-db' \
+                     -H "content-type: application/json" \
+                     -d '{ "created_at": "'"`date`"'" }' \
+                     --max-time 0.1
+              done
+          pre
+            code.language-bash.
+              while true
+              do
+                vagrant halt couchdb-a --force
+                sleep 30
+                vagrant up couchdb-a --no-provision
+                sleep 30
+
+                vagrant halt couchdb-b --force
+                sleep 30
+                vagrant up couchdb-b --no-provision
+                sleep 30
+              done
+        p (Some console logging omitted)
         aside
           ul
             li 2 CouchDB VMs (A &amp; B)
@@ -632,5 +681,6 @@ html
     script(src='bower_components/bespoke-secondary/dist/bespoke-secondary.js')
     script(src='bower_components/prism/prism.js')
     script(src='scripts/prism-bash-highlighting.js')
+    script(src='scripts/bespoke-bullets.js')
     script(src='scripts/main.js')
     // endbuild
