@@ -441,13 +441,22 @@ html
 
       section
         h2 Hoodie
-        h4 Architecture
-        img(src='images/hoodie.png',style='width:600px')
-        p(class='copyrightNotice')
-          | (From the Hoodie team at
-          | <a href='http://hood.ie/intro#magic'>http://hood.ie/intro#magic</a>,
-          | <a href='http://creativecommons.org/licenses/by-nc-sa/4.0/'>CC-BY-SA-NC</a>)
+        ul.bullets.in-place-transition
+          li
+            h4 Architecture
+            img(src='images/hoodie.png',style='width:600px')
+            p(class='copyrightNotice')
+              | (From the Hoodie team at
+              | <a href='http://hood.ie/intro#magic'>http://hood.ie/intro#magic</a>,
+              | <a href='http://creativecommons.org/licenses/by-nc-sa/4.0/'>CC-BY-SA-NC</a>)
 
+          li
+            h4 Future Architecture (Probably)
+            img(src='images/hoodie-pouchdb.png',style='width:600px')
+            p(class='copyrightNotice')
+              | (Modified, from the Hoodie team's diagram at
+              | <a href='http://hood.ie/intro#magic'>http://hood.ie/intro#magic</a>,
+              | <a href='http://creativecommons.org/licenses/by-nc-sa/4.0/'>CC-BY-SA-NC</a>)
         aside
           ul
             li Changes are local, synced with CouchDB in the background
@@ -459,17 +468,6 @@ html
             li Built their own syncing replication client
             li Don't build your own sync! It's hard
             li Our project example was essentially home-made sync
-
-      section
-        h2 Hoodie
-        h4 Future Architecture (Probably)
-        img(src='images/hoodie-pouchdb.png',style='width:600px')
-        p(class='copyrightNotice')
-          | (Modified, from the Hoodie team's diagram at
-          | <a href='http://hood.ie/intro#magic'>http://hood.ie/intro#magic</a>,
-          | <a href='http://creativecommons.org/licenses/by-nc-sa/4.0/'>CC-BY-SA-NC</a>)
-        aside
-          ul
             li Hoodie are actually looking to move to PouchDB currently
             li Essentially CouchDB entirely in the browser, and fully compatible
             li All together, gives you web applications that don't need servers
