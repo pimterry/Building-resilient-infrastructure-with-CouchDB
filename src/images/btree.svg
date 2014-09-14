@@ -81,36 +81,6 @@
          transform="scale(0.8) translate(-6,0)" />
     </marker>
     <marker
-       inkscape:stockid="DotM"
-       orient="auto"
-       refY="0.0"
-       refX="0.0"
-       id="marker8050"
-       style="overflow:visible"
-       inkscape:isstock="true"
-       inkscape:collect="always">
-      <path
-         id="path8052"
-         d="M -2.5,-1.0 C -2.5,1.7600000 -4.7400000,4.0 -7.5,4.0 C -10.260000,4.0 -12.5,1.7600000 -12.5,-1.0 C -12.5,-3.7600000 -10.260000,-6.0 -7.5,-6.0 C -4.7400000,-6.0 -2.5,-3.7600000 -2.5,-1.0 z "
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1;fill:#000000;fill-opacity:1"
-         transform="scale(0.4) translate(7.4, 1)" />
-    </marker>
-    <marker
-       inkscape:stockid="EmptyTriangleOutL"
-       orient="auto"
-       refY="0.0"
-       refX="0.0"
-       id="marker7960"
-       style="overflow:visible"
-       inkscape:isstock="true"
-       inkscape:collect="always">
-      <path
-         id="path7962"
-         d="M 5.77,0.0 L -2.88,5.0 L -2.88,-5.0 L 5.77,0.0 z "
-         style="fill-rule:evenodd;fill:#ffffff;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
-         transform="scale(0.8) translate(-6,0)" />
-    </marker>
-    <marker
        inkscape:isstock="true"
        style="overflow:visible"
        id="marker7576"
@@ -972,7 +942,7 @@
      inkscape:cx="240.17176"
      inkscape:cy="943.57934"
      inkscape:document-units="px"
-     inkscape:current-layer="layer8"
+     inkscape:current-layer="g3458"
      showgrid="false"
      showborder="false"
      inkscape:window-width="1920"
@@ -1217,12 +1187,6 @@
          id="tspan3328"
          x="105.00771"
          y="96.259552">3</tspan></text>
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#marker8050);marker-end:url(#marker7960)"
-       d="m 143.14559,114.66532 c 41.45954,0 11.35064,-25.211856 49.60829,-25.211856"
-       id="path6763-09"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc" />
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#4d4d4d;stroke-width:0.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect6359-1"
@@ -1616,12 +1580,6 @@
          sodipodi:nodetypes="cc" />
       <path
          style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#marker7576);marker-end:url(#marker7518);display:inline"
-         d="m 256.00803,286.3537 15.34936,0"
-         id="path6763-0-2-0"
-         inkscape:connector-curvature="0"
-         sodipodi:nodetypes="cc" />
-      <path
-         style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#marker7576);marker-end:url(#marker7518);display:inline"
          d="m -183.38293,286.8364 27.97436,0"
          id="path6763-0-2-0-4"
          inkscape:connector-curvature="0"
@@ -1857,12 +1815,6 @@
        style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#marker7576);marker-end:url(#marker7518)"
        d="m 387.08608,114.76282 0,32.17335"
        id="path6763-0-2-9"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#marker8050);marker-end:url(#marker7960);display:inline"
-       d="m 300.80797,114.66532 c 41.45954,0 11.35064,-25.21186 49.60829,-25.21186"
-       id="path6763-09-0"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <text
