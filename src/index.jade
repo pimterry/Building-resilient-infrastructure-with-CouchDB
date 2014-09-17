@@ -34,13 +34,15 @@ html
         aside
           ul
             li Tim Perry
-            li Talk about CouchDb
+            li Going to talk about CouchDb
+            li Not focusing too much on CouchDB as a general tool
+            li More interested in CouchDB's niche, and how it fills that
 
       section
         img(src='images/softwireLogo.png',class='logo-big',alt='Softwire')
         aside
           ul
-            li Who am I: I work for Softwire, London.
+            li Who am I: I work for Softwire
             li Bespoke dev on a huge variety of projects
             li One of which I want to talk about today
             li Softwire are hiring!
@@ -55,9 +57,10 @@ html
             li Back to CouchDB though
             li Who's heard of CouchDB? Used? In Production?
             li Apache project
-            li Core concept is 'relax'
-            li Schema-free, simple to use, hard to break
-            li Lightweight processes, will runnable on mobile, or in a browser
+            li Tagline is 'relax'
+            li Simple to use: schema-free, HTTP/restful, fairly simple model
+            li Works anywhere: simple erlang process, no real setup required, works on mobile/JS
+            li Reliable: it just doesn't break. 
             li Not focusing on CouchDB generally, but some of the basics:
 
       section
@@ -78,11 +81,10 @@ html
               }
         aside
           ul
-            li Document store
-            li No joins
-            li JSON
-            li id
-            li revision numbers (for concurrency, later)
+            li Document store: many DBs, of many docs, each with an id
+            li Docs are JSON
+            li _id field is the id
+            li _rev is the revision numbers, updated on changes
 
       section
         h2 HTTP API
@@ -97,7 +99,6 @@ html
         aside
           ul
             li Typical RESTful API
-            li Stored in DBs
             li Access by DB + doc name
             li _id is name
 
@@ -115,13 +116,12 @@ html
                "rev":"1-2902191555"}
         aside
           ul
-            li Can insert with specific ids, or without
             li Revision number is automatic
             li Increments on change
             li Psuedorandom hash
-            li Can also do updates, all revisions are kept
             li PUT to created specific docs and do updates
             li POST to created docs with random ids
+            li Can also do updates, all revisions are kept
 
       section
         h2 Replication
@@ -326,9 +326,13 @@ html
       section
         h2 Previous Solution
         ul
-          li Hold all user sessions in memory on every server
+          li Hold all user sessions on every server
           li Announce new sessions to every server with a central message queue
           li Canonical store kept in a single RDBMS (for server initialisation)
+        aside
+          ul
+            li Were expecting to run out of memory in 12 months
+            li Had already buit a somewhat complex paging system to move things to disk
 
       section
         h2 Real World Problems
@@ -355,6 +359,14 @@ html
           li No single point of failure
           li Scales horizontally easily
           li Major memory savings
+          li Much cleaner design
+        aside
+          ul
+            li Any CouchDB can fail and we don't lose read availability
+            li Can lose writes, but requires us to be very very unlucky, and can only affect half a second's worth of people
+            li If we need more capacity or reliability, just add more CouchDBs. Replication batches, which helps (up to a point)
+            li Configurable memory savings; can tweak cache size per-server to suit
+            li Enormously simplified the codebase, and encapsulated reliability (mostly)
     
       section
         h2 Some Challenges
@@ -580,12 +592,12 @@ html
             li This is going to get a little complicated
             li B+ trees recap, for those that didn't revise
             li Indexes in most DBs you use
-            li Lets you find data efficiently in large sets, and insert efficiently
-            li Like binary trees for 2+ children, typically 100s
-            li Nodes contain up to a max number of values, min of half that except for the root
+            li Lets you find data quickly in large sets, and still insert fast too
+            li Like binary trees with 2+ values per node, typically 100s, here 4.
+            li Width means they don't become too deep (typically 3 or 4 layers max), which has caching benefits
             li Pointer into top, and up to n+1 pointers between nodes
             li Leaf node pointers point to actual data
-            li Internal pointers allow for search to data
+            li Internal pointers allow for search to data, left is lt, right is gte
             li Walk through search
             li Walk through insert
             li Gains height only when the root splits
@@ -604,6 +616,7 @@ html
           ul
             li On disk, looks like this. All continuous, pointers between memory, with empty spaces
             li We then update it in place
+            li Makes normal inserts a little risky, makes leaf split/join very risky
             li This is how B+ trees work generally, but not in CouchDB
 
       section
@@ -620,8 +633,9 @@ html
           ul
             li CouchDB uses an append-only immutable B+ tree model
             li It starts looking the same
-            li But then we replace nodes wholesale instead
+            li But then we replace nodes wholesale instead, and up the tree
             li Reusing nodes that haven't changed
+            li Sounds expensive, but remember these are very wide and very shallow
             li We have to allocate a new root pointer, this purple element
 
       section
@@ -641,7 +655,7 @@ html
             li Each new bit of tree is allocated on the end of the memory
             li Along with the footer
             li To find the root, you just read from the end
-            li Immutable so as many concurrent writes as you like
+            li Immutable so as many concurrent reads as you like
             li Never update, so crashes can't corrupt
             li Any prefix of a CouchDB DB is a valid previous DB, after the first write
             li All sounds suboptimal, but partly because I've oversimplified
@@ -649,6 +663,8 @@ html
             li Footer actually written and flushed twice, with checksums, for error correction
             li Batch writes provide some efficiency
             li Compaction engine in the background, basically copies live data only
+            li Overall though, very neat, unbreakable data structure that's still very quick
+            li Lets see if it worked
 
       section
         h2 Did we break everything?
@@ -705,6 +721,7 @@ html
             li Joins, obviously
             li Not many tools around for monitoring etc
             li Immutability means heavy disk usage
+            li The one big hole in 'Relax', but disks are cheap now
             li Not really made for heavy writes
 
       section
