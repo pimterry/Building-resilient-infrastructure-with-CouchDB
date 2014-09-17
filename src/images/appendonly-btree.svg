@@ -11,13 +11,16 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    sodipodi:docname="appendonly-btree.svg"
-   viewBox="0 0 843.12701 236.55245"
+   viewBox="0 0 743.41351 399.73698"
    inkscape:version="0.48.5 r10040"
    version="1.1"
    id="svg5809"
-   height="236.55244"
-   width="843.12701"
-   style="enable-background:new">
+   height="399.73697"
+   width="743.41351"
+   style="enable-background:new"
+   inkscape:export-filename="C:\Users\tim\Dropbox\talks\Building-resilient-infrastructure-with-CouchDB\src\images\appendonly-btree-disk-4.png"
+   inkscape:export-xdpi="455.69965"
+   inkscape:export-ydpi="455.69965">
   <defs
      id="defs5811">
     <linearGradient
@@ -2531,10 +2534,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4142136"
-     inkscape:cx="449.2075"
-     inkscape:cy="160.4844"
+     inkscape:cx="286.84686"
+     inkscape:cy="250.51185"
      inkscape:document-units="px"
-     inkscape:current-layer="layer2"
+     inkscape:current-layer="g3458"
      showgrid="false"
      showborder="true"
      inkscape:window-width="1920"
@@ -2563,7 +2566,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -2572,7 +2575,7 @@
      inkscape:groupmode="layer"
      id="layer1"
      style="display:inline"
-     transform="translate(-35.485918,84.825927)">
+     transform="translate(-24.20343,-183.32797)">
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#4d4d4d;stroke-width:0.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect6359"
@@ -2895,7 +2898,7 @@
        inkscape:groupmode="layer"
        id="layer5"
        inkscape:label="Base disk"
-       style="display:none">
+       style="display:inline">
       <rect
          style="fill:url(#linearGradient8489);fill-opacity:1;stroke:#4d4d4d;stroke-width:0.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
          id="rect6357-3-9-2"
@@ -3255,13 +3258,13 @@
      inkscape:groupmode="layer"
      id="layer4"
      inkscape:label="Add 6"
-     style="display:none"
-     transform="translate(-35.485918,84.825927)">
+     style="display:inline"
+     transform="translate(-24.20343,-183.32797)">
     <g
        inkscape:groupmode="layer"
        id="layer6"
        inkscape:label="Add 6 on disk"
-       style="display:none">
+       style="display:inline">
       <g
          id="g21270"
          style="fill:#323232;fill-opacity:1;stroke:none"
@@ -3915,8 +3918,8 @@
      inkscape:groupmode="layer"
      id="layer2"
      inkscape:label="Add 7"
-     style="display:none"
-     transform="translate(-35.485918,84.825927)">
+     style="display:inline"
+     transform="translate(-24.20343,-183.32797)">
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#4d4d4d;stroke-width:0.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
        id="rect6359-1-31-0"
@@ -4158,7 +4161,7 @@
        inkscape:groupmode="layer"
        id="layer7"
        inkscape:label="Add 7 on disk"
-       style="display:none">
+       style="display:inline">
       <rect
          style="fill:url(#linearGradient4113);fill-opacity:1;stroke:#4d4d4d;stroke-width:0.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;display:inline"
          id="rect6357-3-9-2-1-5"
@@ -4519,9 +4522,9 @@
       <rect
          style="fill:#ffffff;fill-opacity:0.61960784;stroke:none"
          id="rect6025"
-         width="718.7428"
+         width="700.35803"
          height="76.606621"
-         x="14.849235"
+         x="33.234013"
          y="192.52036" />
       <rect
          style="fill:#ffffff;fill-opacity:0.61960784;stroke:none"
@@ -4696,11 +4699,11 @@
     </g>
   </g>
   <g
-     style="display:none"
+     style="display:inline"
      inkscape:label="Add 8"
      id="g3458"
      inkscape:groupmode="layer"
-     transform="translate(-35.485918,84.825927)">
+     transform="translate(-24.20343,-183.32797)">
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke:#4d4d4d;stroke-width:0.5;stroke-linecap:butt;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="rect6359-1-3"
@@ -4781,7 +4784,7 @@
        inkscape:groupmode="layer"
        id="layer8"
        inkscape:label="Add 8 on disk"
-       style="display:none">
+       style="display:inline">
       <rect
          style="fill:#ffffff;fill-opacity:0.63297873;stroke:none"
          id="rect7728"
@@ -4799,9 +4802,9 @@
       <rect
          style="fill:#ffffff;fill-opacity:0.63297873;stroke:none"
          id="rect7726"
-         width="321.34921"
+         width="248.84921"
          height="306.01669"
-         x="-48.083267"
+         x="24.416735"
          y="199.59143" />
       <rect
          style="fill:#ffffff;fill-opacity:0.63297873;stroke:none"
