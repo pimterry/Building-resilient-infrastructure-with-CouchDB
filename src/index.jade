@@ -119,6 +119,7 @@ html
             li Revision number is automatic
             li Increments on change
             li Psuedorandom hash
+            li Can also do updates, all revisions are kept
             li PUT to created specific docs and do updates
             li POST to created docs with random ids
 
@@ -368,9 +369,11 @@ html
           a(href='http://hood.ie') http://hood.ie
         aside
           ul
+            li Little bit of a tangent, but stick with me
             li Web framework
             li Developer preview!
             li But lots of interesting features
+            li Again not too much depth, more interested in the concepts
 
       section
         h2 Hoodie
@@ -379,6 +382,7 @@ html
           li Offline-First
         aside
           ul
+            li Two driving principles
             li Backend dev is almost by definition, far from user value
             li Focus on building features
             li Offline first like mobile first
@@ -484,31 +488,6 @@ html
 
       section
         h2.full-slide Reliable Replication
-        aside
-          ul
-            li Asynchronous
-            li Handles network failures with retries
-            li 1/4 of a second, exponential backoff, until 5 minutes max
-            li Pull preferred, as it can run immediately on restart
-            li New nodes need data locally more than they need to provide data
-
-      section
-        h2.full-slide
-          | Multiversion
-          | Concurrency
-          | Control
-        h3 (or MVCC)
-        aside
-          ul
-            li Before we can look at this in too much detail, we need to understand couchdb revisions
-            li Walk through normal create update cycle with revisions
-            li Gives ACID locally
-            li Distributed, so concurrent changes
-            li Handled by versioning all changes
-            li We'll look at sync in a sec
-            li Optimistic -&gt; no locking!
-            li Remote conflicts pick arbitrary deterministic revision
-            li Differs from Riak
 
       section
         h2 Reliable Replication
@@ -552,6 +531,30 @@ html
             li Which is why this 3rd step exists: can resume at any point
             li Sequence numbers just let us do that with more efficiency
             li Note that this is potentially going to be separate from the local DBs own sequence number
+            li
+            li Asynchronous
+            li Handles network failures with retries
+            li 1/4 of a second, exponential backoff, until 5 minutes max
+            li Pull preferred, as it can run immediately on restart
+            li New nodes need data locally more than they need to provide data
+
+      section
+        h2.full-slide
+          | Multiversion
+          | Concurrency
+          | Control
+        h3 (or MVCC)
+        aside
+          ul
+            li Before we can look at this in too much detail, we need to understand couchdb revisions
+            li Walk through normal create update cycle with revisions
+            li Gives ACID locally
+            li Distributed, so concurrent changes
+            li Handled by versioning all changes
+            li We'll look at sync in a sec
+            li Optimistic -&gt; no locking!
+            li Remote conflicts pick arbitrary deterministic revision
+            li Differs from Riak
 
       section
         h2.full-slide Append-Only B+ Trees
@@ -572,6 +575,20 @@ html
             img(src='images/btree-3.png').diagram
           li
             img(src='images/btree-4.png').diagram
+        aside
+          ul
+            li This is going to get a little complicated
+            li B+ trees recap, for those that didn't revise
+            li Indexes in most DBs you use
+            li Lets you find data efficiently in large sets, and insert efficiently
+            li Like binary trees for 2+ children, typically 100s
+            li Nodes contain up to a max number of values, min of half that except for the root
+            li Pointer into top, and up to n+1 pointers between nodes
+            li Leaf node pointers point to actual data
+            li Internal pointers allow for search to data
+            li Walk through search
+            li Walk through insert
+            li Gains height only when the root splits
 
       section
         ul.bullets.in-place-transition
@@ -583,6 +600,11 @@ html
             img(src='images/btree-disk-3.png').diagram
           li
             img(src='images/btree-disk-4.png').diagram
+        aside
+          ul
+            li On disk, looks like this. All continuous, pointers between memory, with empty spaces
+            li We then update it in place
+            li This is how B+ trees work generally, but not in CouchDB
 
       section
         ul.bullets.in-place-transition
@@ -594,6 +616,13 @@ html
             img(src='images/appendonly-btree-3.png').diagram
           li
             img(src='images/appendonly-btree-4.png').diagram
+        aside
+          ul
+            li CouchDB uses an append-only immutable B+ tree model
+            li It starts looking the same
+            li But then we replace nodes wholesale instead
+            li Reusing nodes that haven't changed
+            li We have to allocate a new root pointer, this purple element
 
       section
         ul.bullets.in-place-transition
@@ -605,21 +634,21 @@ html
             img(src='images/appendonly-btree-disk-3.png').diagram
           li
             img(src='images/appendonly-btree-disk-4.png').diagram
-
-      section
-        h2.full-slide Append-Only B+ Trees
         aside
           ul
-            li This isn't a great time for a detailed primer on B+ Trees
-            li Look sort of like this, very shallow, wide nodes
-            li Pointers between nodes makes it easy to place them carefully to support this
-            li Higher up nodes do occasionally need updating, but we just create a new one
-            li Old one left in place on disk
-            li After each flush to disk, a footer is added saying which root is correct
-            li Any prefix of a CouchDB database is a valid smaller database
-            li Just go back to the previous footer, guaranteed to be complete
-            li Footers have checksums for corruption
-            li Actually write two footers, for thorough error correction
+            li Hopefully you're still following
+            li This gets more complicated, but it's where the magic happens
+            li Each new bit of tree is allocated on the end of the memory
+            li Along with the footer
+            li To find the root, you just read from the end
+            li Immutable so as many concurrent writes as you like
+            li Never update, so crashes can't corrupt
+            li Any prefix of a CouchDB DB is a valid previous DB, after the first write
+            li All sounds suboptimal, but partly because I've oversimplified
+            li Don't need these empty spaces, for example
+            li Footer actually written and flushed twice, with checksums, for error correction
+            li Batch writes provide some efficiency
+            li Compaction engine in the background, basically copies live data only
 
       section
         h2 Did we break everything?
@@ -660,6 +689,7 @@ html
             li Stop the server killer
             li Bring servers up
             li Show numbers are now back in sync
+
       section
         h2.full-slide Phew.
 
@@ -668,24 +698,24 @@ html
         aside
           ul 
             li One or two last points
-            li Critical: you might not want this
-            li Like all NoSQL DBs, it fulfills a niche
-            li Don't assume just because it's NoSQL it's focused on performance
+            li Firstly, CouchDB is not perfect
             li No functionality you might well expect
             li Arbitrary queries
             li Sharding
             li Joins, obviously
             li Not many tools around for monitoring etc
+            li Immutability means heavy disk usage
+            li Not really made for heavy writes
 
       section
         h2 But '<em>always</em> available' is a great superpower
         aside
           ul
+            li May not be perfect, but unique and very cool
             li NoSQL really isn't all about big data, it's about better data
             li Extra features, that enable and simplify powerful products
             li By moving away from traditional mindset
             li CouchDB is quite different
-            li Unique phoenix from ashes of traditional SQL
             li Simplicity makes it easy to build monitoring etc on top
             li Makes testing and management simple and trivially automatable
             li Reliability means you can build cool things on the worst of foundations
