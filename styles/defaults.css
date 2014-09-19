@@ -102,6 +102,11 @@ article.bespoke-parent {
     page-break-before: always;
     position: static;
     margin: 0;
+    -webkit-transition: none;
+    -moz-transition: none;
+    -o-transition: none;
+    -ms-transition: none;
+    transition: none;
   }
 }
 .bespoke-before {
@@ -110,6 +115,15 @@ article.bespoke-parent {
   -o-transform: translateX(100px) translateX(-320px) rotateY(-90deg) translateX(-320px);
   -ms-transform: translateX(100px) translateX(-320px) rotateY(-90deg) translateX(-320px);
   transform: translateX(100px) translateX(-320px) rotateY(-90deg) translateX(-320px);
+}
+@media print {
+  .bespoke-before {
+    -webkit-transform: none;
+    -moz-transform: none;
+    -o-transform: none;
+    -ms-transform: none;
+    transform: none;
+  }
 }
 .bespoke-after {
   -webkit-transform: translateX(-100px) translateX(320px) rotateY(90deg) translateX(320px);

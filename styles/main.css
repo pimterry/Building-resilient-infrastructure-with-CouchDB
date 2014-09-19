@@ -1,4 +1,10 @@
 @import url("http://fonts.googleapis.com/css?family=Crete+Round");
+@font-face {
+  font-family: 'Crete Round';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Crete Round'), local('CreteRound-Regular'), url("http://fonts.gstatic.com/s/creteround/v5/ZCcPJiCGOzh84o2siPk48YbN6UDyHWBl620a-IRfuBk.woff") format('woff'), url("/fonts/CreteRound.woff") format('woff');
+}
 .bespoke-slide {
   background-color: #fff;
   padding: 20px;
@@ -99,4 +105,33 @@ pre {
   width: 100%;
   font-size: 70%;
   color: #888;
+}
+.diagram {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+}
+.in-place-transition {
+  width: 100%;
+  margin: 0;
+  text-align: inherit;
+}
+.in-place-transition .bespoke-bullet-inactive {
+  opacity: 0;
+  display: none;
+}
+li .in-place-transition .bespoke-bullet-inactive {
+  transform: translateX(0);
+}
+.in-place-transition .bespoke-bullet-active {
+  opacity: 0;
+  display: none;
+}
+.in-place-transition .bespoke-bullet-current,
+.in-place-transition .bespoke-bullet-active:last-of-type,
+.in-place-transition .bespoke-bullet-inactive:first-of-type {
+  opacity: 1;
+  display: inherit;
 }

@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>Building resilient infrastructure with CouchDB</title>
-    <link href='http://fonts.googleapis.com/css?family=Crete+Round' rel='stylesheet' type='text/css'>    
     <link rel="stylesheet" href="styles/styles.css"/>
   </head>
   <body>
@@ -23,14 +22,16 @@
         <aside>
           <ul>
             <li>Tim Perry</li>
-            <li>Talk about CouchDb</li>
+            <li>Going to talk about CouchDb</li>
+            <li>Not focusing too much on CouchDB as a general tool</li>
+            <li>More interested in CouchDB's niche, and how it fills that</li>
           </ul>
         </aside>
       </section>
       <section><img src="images/softwireLogo.png" alt="Softwire" class="logo-big">
         <aside>
           <ul>
-            <li>Who am I: I work for Softwire, London.</li>
+            <li>Who am I: I work for Softwire</li>
             <li>Bespoke dev on a huge variety of projects</li>
             <li>One of which I want to talk about today</li>
             <li>Softwire are hiring!</li>
@@ -45,9 +46,10 @@
             <li>Back to CouchDB though</li>
             <li>Who's heard of CouchDB? Used? In Production?</li>
             <li>Apache project</li>
-            <li>Core concept is 'relax'</li>
-            <li>Schema-free, simple to use, hard to break</li>
-            <li>Lightweight processes, will runnable on mobile, or in a browser</li>
+            <li>Tagline is 'relax'</li>
+            <li>Simple to use: schema-free, HTTP/restful, fairly simple model</li>
+            <li>Works anywhere: simple erlang process, no real setup required, works on mobile/JS</li>
+            <li>Reliable: it just doesn't break. </li>
             <li>Not focusing on CouchDB generally, but some of the basics:</li>
           </ul>
         </aside>
@@ -69,11 +71,10 @@
         </div>
         <aside>
           <ul>
-            <li>Document store</li>
-            <li>No joins</li>
-            <li>JSON</li>
-            <li>id</li>
-            <li>revision numbers (for concurrency, later)</li>
+            <li>Document store: many DBs, of many docs, each with an id</li>
+            <li>Docs are JSON</li>
+            <li>_id field is the id</li>
+            <li>_rev is the revision numbers, updated on changes</li>
           </ul>
         </aside>
       </section>
@@ -89,7 +90,6 @@
         <aside>
           <ul>
             <li>Typical RESTful API</li>
-            <li>Stored in DBs</li>
             <li>Access by DB + doc name</li>
             <li>_id is name</li>
           </ul>
@@ -108,12 +108,12 @@
         </div>
         <aside>
           <ul>
-            <li>Can insert with specific ids, or without</li>
             <li>Revision number is automatic</li>
             <li>Increments on change</li>
             <li>Psuedorandom hash</li>
             <li>PUT to created specific docs and do updates</li>
             <li>POST to created docs with random ids</li>
+            <li>Can also do updates, all revisions are kept</li>
           </ul>
         </aside>
       </section>
@@ -136,14 +136,13 @@ $ curl -X POST http://couchdb-B:5984/_replicator \
           <ul>
             <li>That's the basics out the way</li>
             <li>The critical feature is trivial replication</li>
-            <li>We'll look at this in more detail later</li>
-            <li>Unidirection database synchronization</li>
-            <li>Push or pull, pull preferred, for reasons we'll get to later</li>
-            <li>Continuous</li>
-            <li>Incremental</li>
-            <li>Managed with documents</li>
+            <li>Unidirection database synchronization mechanism</li>
+            <li>We'll look at this in more detail later, but lets walk through this</li>
+            <li>Documents used to manage it</li>
             <li>Updated with replication process metadata + state</li>
             <li>Deleted or changed to manipulate process itself</li>
+            <li>Continuous</li>
+            <li>Incremental</li>
           </ul>
         </aside>
       </section>
@@ -188,12 +187,57 @@ $ curl -X POST http://couchdb-B:5984/_replicator \
 do
   curl -X POST 'http://couchdb-A:5984/demo-db' \
        -H "content-type: application/json" \
-       -d '{ "created_at": "'"`date`"'" }' \
+       -d '{ "created_at": "'"`date +%s%N`"'" }' \
        --max-time 0.1
        
   curl -X POST 'http://couchdb-B:5984/demo-db' \
        -H "content-type: application/json" \
-       -d '{ "created_at": "'"`date`"'" }' \
+       -d '{ "created_at": "'"`date +%s%N`"'" }' \
+       --max-time 0.1
+done</code></pre>
+          <pre><code class="language-bash">while true
+do
+  vagrant halt couchdb-a --force
+  sleep 30
+  vagrant up couchdb-a --no-provision
+  sleep 30
+  
+  vagrant halt couchdb-b --force
+  sleep 30
+  vagrant up couchdb-b --no-provision
+  sleep 30
+done</code></pre>
+        </div>
+        <p>(Some console logging omitted)</p>
+        <aside>
+          <ul>
+            <li>What does this look like?</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <ul class="bullets in-place-transition">
+          <li><img src="images/demo-diagram-replicating.png" class="diagram"></li>
+          <li><img src="images/demo-diagram-create.png" class="diagram"></li>
+          <li><img src="images/demo-diagram-break-b.png" class="diagram"></li>
+          <li><img src="images/demo-diagram-create.png" class="diagram"></li>
+          <li><img src="images/demo-diagram-break-a.png" class="diagram"></li>
+          <li><img src="images/demo-diagram-create.png" class="diagram"></li>
+        </ul>
+      </section>
+      <section>
+        <h2>Let's break everything!</h2>
+        <div class="sideBySide">
+          <pre><code class="language-bash">while true
+do
+  curl -X POST 'http://couchdb-A:5984/demo-db' \
+       -H "content-type: application/json" \
+       -d '{ "created_at": "'"`date +%s%N`"'" }' \
+       --max-time 0.1
+       
+  curl -X POST 'http://couchdb-B:5984/demo-db' \
+       -H "content-type: application/json" \
+       -d '{ "created_at": "'"`date +%s%N`"'" }' \
        --max-time 0.1
 done</code></pre>
           <pre><code class="language-bash">while true
@@ -279,7 +323,7 @@ done</code></pre>
       <section>
         <h2>Previous Solution</h2>
         <ul>
-          <li>Hold all user sessions in memory on every server</li>
+          <li>Hold all user sessions on every server</li>
           <li>Announce new sessions to every server with a central message queue</li>
           <li>Canonical store kept in a single RDBMS (for server initialisation)</li>
         </ul>
@@ -293,6 +337,8 @@ done</code></pre>
         </ul>
         <aside>
           <ul>
+            <li>Were expecting to run out of memory in 12 months</li>
+            <li>Had already buit a somewhat complex paging system to move things to disk</li>
             <li>So ailing infrastructure, high availability requirements: we needed a datastore that'd solve that</li>
           </ul>
         </aside>
@@ -313,7 +359,17 @@ done</code></pre>
           <li>No single point of failure</li>
           <li>Scales horizontally easily</li>
           <li>Major memory savings</li>
+          <li>Much cleaner design</li>
         </ul>
+        <aside>
+          <ul>
+            <li>Any CouchDB can fail and we don't lose read availability</li>
+            <li>Can lose writes, but requires us to be very very unlucky, and can only affect half a second's worth of people</li>
+            <li>If we need more capacity or reliability, just add more CouchDBs. Replication batches, which helps (up to a point)</li>
+            <li>Configurable memory savings; can tweak cache size per-server to suit</li>
+            <li>Enormously simplified the codebase, and encapsulated reliability (mostly)</li>
+          </ul>
+        </aside>
       </section>
       <section>
         <h2>Some Challenges</h2>
@@ -328,9 +384,11 @@ done</code></pre>
         <h4><a href="http://hood.ie">http://hood.ie</a></h4>
         <aside>
           <ul>
+            <li>Little bit of a tangent, but stick with me</li>
             <li>Web framework</li>
             <li>Developer preview!</li>
             <li>But lots of interesting features</li>
+            <li>Again not too much depth, more interested in the concepts</li>
           </ul>
         </aside>
       </section>
@@ -342,6 +400,7 @@ done</code></pre>
         </ul>
         <aside>
           <ul>
+            <li>Two driving principles</li>
             <li>Backend dev is almost by definition, far from user value</li>
             <li>Focus on building features</li>
             <li>Offline first like mobile first</li>
@@ -406,12 +465,24 @@ done</code></pre>
       </section>
       <section>
         <h2>Hoodie</h2>
-        <h4>Architecture</h4><img src="images/hoodie.png" style="width:600px">
-        <p class="copyrightNotice">
-          (From the Hoodie team at
-          <a href='http://hood.ie/intro#magic'>http://hood.ie/intro#magic</a>,
-          <a href='http://creativecommons.org/licenses/by-nc-sa/4.0/'>CC-BY-SA-NC</a>)
-        </p>
+        <ul class="bullets in-place-transition">
+          <li>
+            <h4>Architecture</h4><img src="images/hoodie.png" style="width:600px">
+            <p class="copyrightNotice">
+              (From the Hoodie team at
+              <a href='http://hood.ie/intro#magic'>http://hood.ie/intro#magic</a>,
+              <a href='http://creativecommons.org/licenses/by-nc-sa/4.0/'>CC-BY-SA-NC</a>)
+            </p>
+          </li>
+          <li>
+            <h4>Future Architecture (Probably)</h4><img src="images/hoodie-pouchdb.png" style="width:600px">
+            <p class="copyrightNotice">
+              (Modified, from the Hoodie team's diagram at
+              <a href='http://hood.ie/intro#magic'>http://hood.ie/intro#magic</a>,
+              <a href='http://creativecommons.org/licenses/by-nc-sa/4.0/'>CC-BY-SA-NC</a>)
+            </p>
+          </li>
+        </ul>
         <aside>
           <ul>
             <li>Changes are local, synced with CouchDB in the background</li>
@@ -423,19 +494,6 @@ done</code></pre>
             <li>Built their own syncing replication client</li>
             <li>Don't build your own sync! It's hard</li>
             <li>Our project example was essentially home-made sync</li>
-          </ul>
-        </aside>
-      </section>
-      <section>
-        <h2>Hoodie</h2>
-        <h4>Future Architecture (Probably)</h4><img src="images/hoodie-pouchdb.png" style="width:600px">
-        <p class="copyrightNotice">
-          (Modified, from the Hoodie team's diagram at
-          <a href='http://hood.ie/intro#magic'>http://hood.ie/intro#magic</a>,
-          <a href='http://creativecommons.org/licenses/by-nc-sa/4.0/'>CC-BY-SA-NC</a>)
-        </p>
-        <aside>
-          <ul>
             <li>Hoodie are actually looking to move to PouchDB currently</li>
             <li>Essentially CouchDB entirely in the browser, and fully compatible</li>
             <li>All together, gives you web applications that don't need servers</li>
@@ -456,36 +514,6 @@ done</code></pre>
       </section>
       <section>
         <h2 class="full-slide">Reliable Replication</h2>
-        <aside>
-          <ul>
-            <li>Asynchronous</li>
-            <li>Handles network failures with retries</li>
-            <li>1/4 of a second, exponential backoff, until 5 minutes max</li>
-            <li>Pull preferred, as it can run immediately on restart</li>
-            <li>New nodes need data locally more than they need to provide data</li>
-          </ul>
-        </aside>
-      </section>
-      <section>
-        <h2 class="full-slide">
-          Multiversion
-          Concurrency
-          Control
-        </h2>
-        <h3>(or MVCC)</h3>
-        <aside>
-          <ul>
-            <li>Before we can look at this in too much detail, we need to understand couchdb revisions</li>
-            <li>Walk through normal create update cycle with revisions</li>
-            <li>Gives ACID locally</li>
-            <li>Distributed, so concurrent changes</li>
-            <li>Handled by versioning all changes</li>
-            <li>We'll look at sync in a sec</li>
-            <li>Optimistic -&gt; no locking!</li>
-            <li>Remote conflicts pick arbitrary deterministic revision</li>
-            <li>Differs from Riak</li>
-          </ul>
-        </aside>
       </section>
       <section>
         <h2>Reliable Replication</h2>
@@ -531,6 +559,33 @@ done</code></pre>
             <li>Which is why this 3rd step exists: can resume at any point</li>
             <li>Sequence numbers just let us do that with more efficiency</li>
             <li>Note that this is potentially going to be separate from the local DBs own sequence number</li>
+            <li></li>
+            <li>Asynchronous</li>
+            <li>Handles network failures with retries</li>
+            <li>1/4 of a second, exponential backoff, until 5 minutes max</li>
+            <li>Pull preferred, as it can run immediately on restart</li>
+            <li>New nodes need data locally more than they need to provide data</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <h2 class="full-slide">
+          Multiversion
+          Concurrency
+          Control
+        </h2>
+        <h3>(or MVCC)</h3>
+        <aside>
+          <ul>
+            <li>Before we can look at this in too much detail, we need to understand couchdb revisions</li>
+            <li>Walk through normal create update cycle with revisions</li>
+            <li>Gives ACID locally</li>
+            <li>Distributed, so concurrent changes</li>
+            <li>Handled by versioning all changes</li>
+            <li>We'll look at sync in a sec</li>
+            <li>Optimistic -&gt; no locking!</li>
+            <li>Remote conflicts pick arbitrary deterministic revision</li>
+            <li>Differs from Riak</li>
           </ul>
         </aside>
       </section>
@@ -546,20 +601,87 @@ done</code></pre>
         </aside>
       </section>
       <section>
-        <h2>Append-Only B+ Trees</h2><img src="images/couchDbBTree.png" style="width: 400px; margin-bottom: 10px">
-        <p class="copyrightNotice">(From '<a href='http://guide.couchdb.org/draft/btree.html'>CouchDB: The Definitive Guide</a>', CC-BY) </p>
+        <ul class="bullets in-place-transition">
+          <li><img src="images/btree-1.png" class="diagram"></li>
+          <li><img src="images/btree-2.png" class="diagram"></li>
+          <li><img src="images/btree-3.png" class="diagram"></li>
+          <li><img src="images/btree-4.png" class="diagram"></li>
+        </ul>
         <aside>
           <ul>
-            <li>This isn't a great time for a detailed primer on B+ Trees</li>
-            <li>Look sort of like this, very shallow, wide nodes</li>
-            <li>Pointers between nodes makes it easy to place them carefully to support this</li>
-            <li>Higher up nodes do occasionally need updating, but we just create a new one</li>
-            <li>Old one left in place on disk</li>
-            <li>After each flush to disk, a footer is added saying which root is correct</li>
-            <li>Any prefix of a CouchDB database is a valid smaller database</li>
-            <li>Just go back to the previous footer, guaranteed to be complete</li>
-            <li>Footers have checksums for corruption</li>
-            <li>Actually write two footers, for thorough error correction</li>
+            <li>This is going to get a little complicated</li>
+            <li>B+ trees recap, for those that didn't revise</li>
+            <li>Indexes in most DBs you use</li>
+            <li>Lets you find data quickly in large sets, and still insert fast too</li>
+            <li>Like binary trees with 2+ values per node, typically 100s, here 4.</li>
+            <li>Width means they don't become too deep (typically 3 or 4 layers max), which has caching benefits</li>
+            <li>Pointer into top, and up to n+1 pointers between nodes</li>
+            <li>Leaf node pointers point to actual data</li>
+            <li>Internal pointers allow for search to data, left is lt, right is gte</li>
+            <li>Walk through search</li>
+            <li>Walk through insert</li>
+            <li>Gains height only when the root splits</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <ul class="bullets in-place-transition">
+          <li><img src="images/btree-disk-1.png" class="diagram"></li>
+          <li><img src="images/btree-disk-2.png" class="diagram"></li>
+          <li><img src="images/btree-disk-3.png" class="diagram"></li>
+          <li><img src="images/btree-disk-4.png" class="diagram"></li>
+        </ul>
+        <aside>
+          <ul>
+            <li>On disk, looks like this. All continuous, pointers between memory, with empty spaces</li>
+            <li>We then update it in place</li>
+            <li>Makes normal inserts a little risky, makes leaf split/join very risky</li>
+            <li>This is how B+ trees work generally, but not in CouchDB</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <ul class="bullets in-place-transition">
+          <li><img src="images/appendonly-btree-1.png" class="diagram"></li>
+          <li><img src="images/appendonly-btree-2.png" class="diagram"></li>
+          <li><img src="images/appendonly-btree-3.png" class="diagram"></li>
+          <li><img src="images/appendonly-btree-4.png" class="diagram"></li>
+        </ul>
+        <aside>
+          <ul>
+            <li>CouchDB uses an append-only immutable B+ tree model</li>
+            <li>It starts looking the same</li>
+            <li>But then we replace nodes wholesale instead, and up the tree</li>
+            <li>Reusing nodes that haven't changed</li>
+            <li>Sounds expensive, but remember these are very wide and very shallow</li>
+            <li>We have to allocate a new root pointer, this purple element</li>
+          </ul>
+        </aside>
+      </section>
+      <section>
+        <ul class="bullets in-place-transition">
+          <li><img src="images/appendonly-btree-disk-1.png" class="diagram"></li>
+          <li><img src="images/appendonly-btree-disk-2.png" class="diagram"></li>
+          <li><img src="images/appendonly-btree-disk-3.png" class="diagram"></li>
+          <li><img src="images/appendonly-btree-disk-4.png" class="diagram"></li>
+        </ul>
+        <aside>
+          <ul>
+            <li>Hopefully you're still following</li>
+            <li>This gets more complicated, but it's where the magic happens</li>
+            <li>Each new bit of tree is allocated on the end of the memory</li>
+            <li>Along with the footer</li>
+            <li>To find the root, you just read from the end</li>
+            <li>Immutable so as many concurrent reads as you like</li>
+            <li>Never update, so crashes can't corrupt</li>
+            <li>Any prefix of a CouchDB DB is a valid previous DB, after the first write</li>
+            <li>All sounds suboptimal, but partly because I've oversimplified</li>
+            <li>Don't need these empty spaces, for example</li>
+            <li>Footer actually written and flushed twice, with checksums, for error correction</li>
+            <li>Batch writes provide some efficiency</li>
+            <li>Compaction engine in the background, basically copies live data only</li>
+            <li>Overall though, very neat, unbreakable data structure that's still very quick</li>
+            <li>Lets see if it worked</li>
           </ul>
         </aside>
       </section>
@@ -570,12 +692,12 @@ done</code></pre>
 do
   curl -X POST 'http://couchdb-A:5984/demo-db' \
        -H "content-type: application/json" \
-       -d '{ "created_at": "'"`date`"'" }' \
+       -d '{ "created_at": "'"`date +%s%N`"'" }' \
        --max-time 0.1
        
   curl -X POST 'http://couchdb-B:5984/demo-db' \
        -H "content-type: application/json" \
-       -d '{ "created_at": "'"`date`"'" }' \
+       -d '{ "created_at": "'"`date +%s%N`"'" }' \
        --max-time 0.1
 done</code></pre>
           <pre><code class="language-bash">while true
@@ -609,14 +731,15 @@ done</code></pre>
         <aside>
           <ul>
             <li>One or two last points</li>
-            <li>Critical: you might not want this</li>
-            <li>Like all NoSQL DBs, it fulfills a niche</li>
-            <li>Don't assume just because it's NoSQL it's focused on performance</li>
+            <li>Firstly, CouchDB is not perfect</li>
             <li>No functionality you might well expect</li>
             <li>Arbitrary queries</li>
             <li>Sharding</li>
             <li>Joins, obviously</li>
             <li>Not many tools around for monitoring etc</li>
+            <li>Immutability means heavy disk usage</li>
+            <li>The one big hole in 'Relax', but disks are cheap now</li>
+            <li>Not really made for heavy writes</li>
           </ul>
         </aside>
       </section>
@@ -624,11 +747,11 @@ done</code></pre>
         <h2>But '<em>always</em> available' is a great superpower</h2>
         <aside>
           <ul>
+            <li>May not be perfect, but unique and very cool</li>
             <li>NoSQL really isn't all about big data, it's about better data</li>
             <li>Extra features, that enable and simplify powerful products</li>
             <li>By moving away from traditional mindset</li>
             <li>CouchDB is quite different</li>
-            <li>Unique phoenix from ashes of traditional SQL</li>
             <li>Simplicity makes it easy to build monitoring etc on top</li>
             <li>Makes testing and management simple and trivially automatable</li>
             <li>Reliability means you can build cool things on the worst of foundations</li>
